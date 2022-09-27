@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Github</string>
+    <string name="github_user">Github User</string>
+    <string name="message_body">The complete developer platform to build, scale, and deliver secure software.</string>
+</resources>
