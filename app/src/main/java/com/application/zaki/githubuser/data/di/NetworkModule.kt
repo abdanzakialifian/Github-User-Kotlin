@@ -24,7 +24,7 @@ class NetworkModule {
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
                     .addHeader("Accept", "application/vnd.github+json")
-                    .addHeader("Authorization", "Bearer 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")
+                    .addHeader("Authorization", "Bearer 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")
                     .build()
                 chain.proceed(requestBuilder)
             }

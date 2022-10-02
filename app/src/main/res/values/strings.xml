@@ -2,4 +2,12 @@
     <string name="app_name">Github</string>
     <string name="github_user">Github User</string>
     <string name="message_body">The complete developer platform to build, scale, and deliver secure software.</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="repository">Repository</string>
+    <string name="bio">Bio :</string>
+    <string name="company">Company : </string>
+    <string name="dash">-</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.application.zaki.githubuser.presentation.home.viewmodel
+package com.application.zaki.githubuser.presentation.detail.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,14 +10,9 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val githubUseCase: IGithubUseCase) : ViewModel() {
-    fun getListUser() = githubUseCase.getListUsers().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = NetworkResult.Loading(null)
-    )
-
-    fun getUser(query: String) = githubUseCase.getUsers(query).stateIn(
+class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithubUseCase) :
+    ViewModel() {
+    fun getDetailUser(username: String) = githubUseCase.getDetailUser(username).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = NetworkResult.Loading(null)

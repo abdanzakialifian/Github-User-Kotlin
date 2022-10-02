@@ -1,26 +1,37 @@
 package com.application.zaki.githubuser.data.source.remote
 
-import com.application.zaki.githubuser.data.source.remote.response.UserResponse
+import com.application.zaki.githubuser.data.source.remote.response.DetailUserResponse
 import com.application.zaki.githubuser.utils.NetworkResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
-    suspend fun getUser(username: String): NetworkResult<UserResponse> =
-        try {
-            val response = apiService.getUser(username)
+    fun getDetailUser(username: String): Flow<NetworkResult<DetailUserResponse>> {
+        return flow {
+            val response = apiService.getDetailUser(username)
+
+            emit(NetworkResult.Loading(null))
+
             if (response.isSuccessful) {
-                val body = response.body()
-                if (body != null) {
-                    NetworkResult.Success(body)
+                val data = response.body()
+                if (data != null) {
+                    emit(NetworkResult.Success(data))
                 } else {
-                    NetworkResult.Empty
+                    emit(NetworkResult.Empty)
                 }
             } else {
-                NetworkResult.Error(response.message())
+                emit(NetworkResult.Error(response.message()))
             }
-        } catch (e: Exception) {
-            NetworkResult.Error(e.printStackTrace().toString())
         }
+            .catch {
+                emit(NetworkResult.Error(it.message.toString()))
+            }
+            .flowOn(Dispatchers.IO)
+    }
 }

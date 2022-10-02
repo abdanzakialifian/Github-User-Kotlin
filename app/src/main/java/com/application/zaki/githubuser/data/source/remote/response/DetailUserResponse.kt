@@ -2,7 +2,7 @@ package com.application.zaki.githubuser.data.source.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-data class UserResponse(
+data class DetailUserResponse(
 
 	@field:SerializedName("gists_url")
 	val gistsUrl: String? = null,
@@ -41,7 +41,7 @@ data class UserResponse(
 	val siteAdmin: Boolean? = null,
 
 	@field:SerializedName("company")
-	val company: Any? = null,
+	val company: String? = null,
 
 	@field:SerializedName("id")
 	val id: Int? = null,
