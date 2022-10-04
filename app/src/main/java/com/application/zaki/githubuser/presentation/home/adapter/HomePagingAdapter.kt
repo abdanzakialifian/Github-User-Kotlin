@@ -10,7 +10,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.application.zaki.githubuser.R
-import com.application.zaki.githubuser.databinding.ItemListUserBinding
+import com.application.zaki.githubuser.databinding.ItemListUsersBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.utils.loadImageUrl
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class HomePagingAdapter @Inject constructor() :
         this.onItemCliCkCallback = onItemCliCkCallback
     }
 
-    inner class HomePagingViewHolder(private val binding: ItemListUserBinding) :
+    inner class HomePagingViewHolder(private val binding: ItemListUsersBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ListUsers?) {
             binding.apply {
@@ -52,7 +52,7 @@ class HomePagingAdapter @Inject constructor() :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomePagingViewHolder =
-        ItemListUserBinding.inflate(
+        ItemListUsersBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         ).run {
             HomePagingViewHolder(this)

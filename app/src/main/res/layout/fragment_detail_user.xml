@@ -196,8 +196,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_body_company"
         app:tabIndicatorColor="@color/white"
-        app:tabTextColor="@color/grey_loading"
-        app:tabSelectedTextColor="@color/white"/>
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextAppearance="@style/TabLayoutFont"
+        app:tabTextColor="@color/grey_loading" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"

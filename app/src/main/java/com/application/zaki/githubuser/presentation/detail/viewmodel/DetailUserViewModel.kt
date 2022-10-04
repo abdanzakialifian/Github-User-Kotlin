@@ -17,4 +17,22 @@ class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithub
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = NetworkResult.Loading(null)
     )
+
+    fun getFollowersUser(username: String) = githubUseCase.getFollowersUser(username).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = NetworkResult.Loading(null)
+    )
+
+    fun getFollowingUser(username: String) = githubUseCase.getFollowingUser(username).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = NetworkResult.Loading(null)
+    )
+
+    fun getRepositoriesUser(username: String) = githubUseCase.getRepositoriesUser(username).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = NetworkResult.Loading(null)
+    )
 }

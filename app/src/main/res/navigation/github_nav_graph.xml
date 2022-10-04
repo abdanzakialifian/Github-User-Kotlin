@@ -13,6 +13,15 @@
         <action
             android:id="@+id/action_homeFragment_to_detailUserFragment"
             app:destination="@id/detailUserFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_followersFragment"
+            app:destination="@id/followersFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_followingFragment"
+            app:destination="@id/followingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_repositoryFragment"
+            app:destination="@id/repositoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailUserFragment"
@@ -23,4 +32,19 @@
             android:name="username"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/followersFragment"
+        android:name="com.application.zaki.githubuser.presentation.detail.view.FollowersFragment"
+        android:label="fragment_followers"
+        tools:layout="@layout/fragment_followers" />
+    <fragment
+        android:id="@+id/followingFragment"
+        android:name="com.application.zaki.githubuser.presentation.detail.view.FollowingFragment"
+        android:label="fragment_following"
+        tools:layout="@layout/fragment_following" />
+    <fragment
+        android:id="@+id/repositoryFragment"
+        android:name="com.application.zaki.githubuser.presentation.detail.view.RepositoryFragment"
+        android:label="fragment_repository"
+        tools:layout="@layout/fragment_repository" />
 </navigation>

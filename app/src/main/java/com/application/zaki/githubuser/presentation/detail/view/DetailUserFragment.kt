@@ -1,6 +1,7 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -73,20 +74,26 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
     }
 
     private fun setViewPager() {
-        val tabLayoutTitle = arrayOf(
-            resources.getString(R.string.followers),
-            resources.getString(R.string.following),
-            resources.getString(R.string.repository)
-        )
-
         val viewPager = binding?.viewPager
         val tabLayout = binding?.tabLayout
         val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        adapter.addFragment(RepositoryFragment(args.username))
+        adapter.addFragment(FollowersFragment(args.username))
+        adapter.addFragment(FollowingFragment(args.username))
         viewPager?.adapter = adapter
         if (tabLayout != null && viewPager != null) {
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                tab.text = tabLayoutTitle[position]
+                tab.text = resources.getString(TAB_TITLES[position])
             }.attach()
         }
+    }
+
+    companion object {
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.repository,
+            R.string.followers,
+            R.string.following
+        )
     }
 }

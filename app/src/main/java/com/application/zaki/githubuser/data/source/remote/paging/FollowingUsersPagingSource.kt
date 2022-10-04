@@ -8,25 +8,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ListUsersPagingSource @Inject constructor(private val apiService: ApiService) :
+class FollowingUsersPagingSource @Inject constructor(private val apiService: ApiService) :
     PagingSource<Int, ListUsersResponse>() {
+    private var username: String? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListUsersResponse> {
         return try {
-            val position = params.key ?: 0
-            val response = apiService.getListUsers(position, params.loadSize)
+            val position = params.key ?: 1
+            val response = apiService.getFollowingUser(username ?: "", position, params.loadSize)
             val data = response.body()
-            val listUsers = ArrayList<ListUsersResponse>()
+            val listFollowing = ArrayList<ListUsersResponse>()
             if (response.isSuccessful) {
                 data?.let {
-                    listUsers.addAll(it)
+                    listFollowing.addAll(it)
                 }
             }
 
             LoadResult.Page(
-                data = listUsers,
-                prevKey = if (position == 0) null else position - 10,
-                nextKey = if (listUsers.isEmpty()) null else position + 10
+                data = listFollowing,
+                prevKey = if (position == 1) null else position - 1,
+                nextKey = if (listFollowing.isEmpty()) null else position + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
@@ -35,8 +36,12 @@ class ListUsersPagingSource @Inject constructor(private val apiService: ApiServi
 
     override fun getRefreshKey(state: PagingState<Int, ListUsersResponse>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(10)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(10)
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
+    }
+
+    fun setUsername(username: String) {
+        this.username = username
     }
 }

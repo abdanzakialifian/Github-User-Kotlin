@@ -11,4 +11,5 @@
     <color name="grey">#EFEFEF</color>
     <color name="grey_loading">#DDDDDD</color>
     <color name="dark_grey">#413F42</color>
+    <color name="light_blue">#2C98FF</color>
 </resources>

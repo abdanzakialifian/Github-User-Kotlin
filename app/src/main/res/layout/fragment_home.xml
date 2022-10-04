@@ -71,25 +71,25 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
-            <include layout="@layout/item_list_user_placeholder" />
+            <include layout="@layout/item_list_users_placeholder" />
 
         </LinearLayout>
 
@@ -107,6 +107,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_view"
-        tools:listitem="@layout/item_list_user" />
+        tools:listitem="@layout/item_list_users" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

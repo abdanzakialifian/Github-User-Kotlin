@@ -3,14 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Application/Github User/app/src/main/res/drawable/background_circle.xml" value="0.214" />
+        <entry key="..\:/Android Application/Github User/app/src/main/res/drawable/background_status_repository.xml" value="0.214" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_detail_user.xml" value="0.264" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_followers.xml" value="0.20416666666666666" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_following.xml" value="0.20416666666666666" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_home.xml" value="0.2" />
-        <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_repository.xml" value="0.20416666666666666" />
+        <entry key="..\:/Android Application/Github User/app/src/main/res/layout/fragment_repository.xml" value="0.2" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_placeholder.xml" value="0.203125" />
+        <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_repository.xml" value="0.6" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_user.xml" value="0.20416666666666666" />
+        <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_user_detail.xml" value="0.20416666666666666" />
         <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_user_placeholder.xml" value="0.264" />
+        <entry key="..\:/Android Application/Github User/app/src/main/res/layout/item_list_users_detail.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>
