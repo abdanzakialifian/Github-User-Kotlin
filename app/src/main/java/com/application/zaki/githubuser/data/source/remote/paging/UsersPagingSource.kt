@@ -15,8 +15,8 @@ class UsersPagingSource @Inject constructor(
     private var query: String? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UsersItemResponse> {
+        val position = params.key ?: 1
         return try {
-            val position = params.key ?: 1
             val response = apiService.getUsers(query ?: "", position, params.loadSize)
             val data = response.body()?.items
             val listUsers = ArrayList<UsersItemResponse>()
@@ -28,8 +28,8 @@ class UsersPagingSource @Inject constructor(
 
             LoadResult.Page(
                 data = listUsers,
-                prevKey = if (position == 1) null else position - 1,
-                nextKey = if (response.body()?.items?.isEmpty() == true) null else position + 1
+                prevKey = if (position == 1) null else position,
+                nextKey = if (listUsers.isEmpty()) null else position + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

@@ -32,49 +32,6 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
         searchUser()
     }
 
-    private fun searchUser() {
-        binding?.searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                searchUser(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-    }
-
-    private fun searchUser(query: String?) {
-        binding?.apply {
-            searchView.clearFocus()
-            rvUsers.adapter = homePagingAdapter
-            rvUsers.setHasFixedSize(true)
-            lifecycleScope.launchWhenStarted {
-                viewModel.getUser(query ?: "")
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .distinctUntilChanged()
-                    .collect {
-                        when (it) {
-                            is NetworkResult.Loading -> {
-                                rvUsers.gone()
-                                shimmerPlaceholder.visible()
-                                shimmerPlaceholder.startShimmer()
-                            }
-                            is NetworkResult.Success -> {
-                                shimmerPlaceholder.gone()
-                                shimmerPlaceholder.stopShimmer()
-                                rvUsers.visible()
-                                homePagingAdapter.submitData(lifecycle, it.data)
-                            }
-                            is NetworkResult.Error -> {}
-                            is NetworkResult.Empty -> {}
-                        }
-                    }
-            }
-        }
-    }
-
     private fun setListUser() {
         binding?.apply {
             rvUsers.adapter = homePagingAdapter
@@ -109,5 +66,49 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                 findNavController().navigate(actionToDetailUserFragment)
             }
         })
+    }
+
+    private fun searchUser() {
+        binding?.apply {
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText == null || newText == "") {
+                        setListUser()
+                    } else {
+                        viewModel.querySearch.value = newText
+                        rvUsers.gone()
+                        shimmerPlaceholder.visible()
+                        shimmerPlaceholder.startShimmer()
+                    }
+                    return true
+                }
+            })
+
+            lifecycleScope.launchWhenStarted {
+                viewModel.searchResult
+                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .collect {
+                        when (it) {
+                            is NetworkResult.Loading -> {
+                                rvUsers.gone()
+                                shimmerPlaceholder.visible()
+                                shimmerPlaceholder.startShimmer()
+                            }
+                            is NetworkResult.Success -> {
+                                homePagingAdapter.submitData(lifecycle, it.data)
+                                shimmerPlaceholder.gone()
+                                shimmerPlaceholder.stopShimmer()
+                                rvUsers.visible()
+                            }
+                            is NetworkResult.Error -> {}
+                            is NetworkResult.Empty -> {}
+                        }
+                    }
+            }
+        }
     }
 }
