@@ -13,7 +13,9 @@ import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.ViewPagerAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
 import com.application.zaki.githubuser.utils.NetworkResult
+import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.loadImageUrl
+import com.application.zaki.githubuser.utils.visible
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,10 +41,16 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                     when (it) {
                         is NetworkResult.Loading -> {
                             binding?.apply {
+                                layoutDetailInformationNotShimmerPlaceholder.gone()
+                                layoutDetailInformationShimmerPlaceholder.visible()
+                                layoutDetailInformationShimmerPlaceholder.startShimmer()
                             }
                         }
                         is NetworkResult.Success -> {
                             binding?.apply {
+                                layoutDetailInformationNotShimmerPlaceholder.visible()
+                                layoutDetailInformationShimmerPlaceholder.gone()
+                                layoutDetailInformationShimmerPlaceholder.stopShimmer()
                                 val data = it.data
                                 tvUsernameUser.text = data.login
                                 imgGithubLogo.setOnClickListener {
@@ -56,8 +64,7 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                                 tvBodyRepository.text = data.publicRepos.toString()
                                 tvNameUser.text = data.name
                                 tvBodyBio.text = data.bio ?: resources.getString(R.string.dash)
-                                tvBodyCompany.text =
-                                    data.company ?: resources.getString(R.string.dash)
+                                tvBodyCompany.text = data.company ?: resources.getString(R.string.dash)
                             }
                         }
                         is NetworkResult.Error -> {

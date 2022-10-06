@@ -6,185 +6,217 @@
     android:layout_height="match_parent"
     tools:context=".presentation.detail.view.DetailUserFragment">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_arrow_back"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_detail_information"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_arrow_back_black_24"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_username_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_medium"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@id/img_arrow_back"
-        app:layout_constraintStart_toEndOf="@id/img_arrow_back"
-        app:layout_constraintTop_toTopOf="@id/img_arrow_back"
-        tools:text="abdanzaki" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_detail_information_not_shimmer_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_github_logo"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginEnd="24dp"
-        android:src="@drawable/github_logo_mark_black_32"
-        app:layout_constraintBottom_toBottomOf="@id/img_arrow_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/img_arrow_back" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_arrow_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/ic_arrow_back_black_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/img_profile_user"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        app:civ_border_color="@color/black"
-        app:civ_border_width="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_arrow_back"
-        tools:src="@tools:sample/avatars" />
+            <TextView
+                android:id="@+id/tv_username_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/img_arrow_back"
+                app:layout_constraintStart_toEndOf="@id/img_arrow_back"
+                app:layout_constraintTop_toTopOf="@id/img_arrow_back"
+                tools:text="abdanzaki" />
 
-    <TextView
-        android:id="@+id/tv_title_followers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/followers"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/img_profile_user"
-        app:layout_constraintTop_toTopOf="@id/img_profile_user" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_github_logo"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="24dp"
+                android:src="@drawable/github_logo_mark_black_32"
+                app:layout_constraintBottom_toBottomOf="@id/img_arrow_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/img_arrow_back" />
 
-    <TextView
-        android:id="@+id/tv_body_followers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@id/tv_title_followers"
-        app:layout_constraintStart_toStartOf="@id/tv_title_followers"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_followers"
-        tools:text="112" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_profile_user"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                app:civ_border_color="@color/black"
+                app:civ_border_width="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_arrow_back"
+                tools:src="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tv_title_following"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/following"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/tv_title_followers"
-        app:layout_constraintTop_toTopOf="@id/tv_title_followers" />
+            <TextView
+                android:id="@+id/tv_title_followers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/followers"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/img_profile_user"
+                app:layout_constraintTop_toTopOf="@id/img_profile_user" />
 
-    <TextView
-        android:id="@+id/tv_body_following"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@id/tv_title_following"
-        app:layout_constraintStart_toStartOf="@id/tv_title_following"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_following"
-        tools:text="100" />
+            <TextView
+                android:id="@+id/tv_body_followers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_title_followers"
+                app:layout_constraintStart_toStartOf="@id/tv_title_followers"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_followers"
+                tools:text="112" />
 
-    <TextView
-        android:id="@+id/tv_title_repository"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/repository"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/tv_title_following"
-        app:layout_constraintTop_toTopOf="@id/tv_title_following" />
+            <TextView
+                android:id="@+id/tv_title_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/following"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/tv_title_followers"
+                app:layout_constraintTop_toTopOf="@id/tv_title_followers" />
 
-    <TextView
-        android:id="@+id/tv_body_repository"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@id/tv_title_repository"
-        app:layout_constraintStart_toStartOf="@id/tv_title_repository"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_repository"
-        tools:text="10" />
+            <TextView
+                android:id="@+id/tv_body_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_title_following"
+                app:layout_constraintStart_toStartOf="@id/tv_title_following"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_following"
+                tools:text="100" />
 
-    <TextView
-        android:id="@+id/tv_name_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_semi_bold"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="@id/img_profile_user"
-        app:layout_constraintTop_toBottomOf="@id/img_profile_user"
-        tools:text="Abdan Zaki Alifian" />
+            <TextView
+                android:id="@+id/tv_title_repository"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/repository"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/tv_title_following"
+                app:layout_constraintTop_toTopOf="@id/tv_title_following" />
 
-    <TextView
-        android:id="@+id/tv_title_bio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/bio"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@id/tv_name_user"
-        app:layout_constraintTop_toBottomOf="@id/tv_name_user" />
+            <TextView
+                android:id="@+id/tv_body_repository"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_title_repository"
+                app:layout_constraintStart_toStartOf="@id/tv_title_repository"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_repository"
+                tools:text="10" />
 
-    <TextView
-        android:id="@+id/tv_body_bio"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="24dp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_title_bio"
-        app:layout_constraintTop_toTopOf="@id/tv_title_bio"
-        tools:text="Android Developer" />
+            <TextView
+                android:id="@+id/tv_name_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semi_bold"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@id/img_profile_user"
+                app:layout_constraintTop_toBottomOf="@id/img_profile_user"
+                tools:text="Abdan Zaki Alifian" />
 
-    <TextView
-        android:id="@+id/tv_title_company"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/company"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@id/tv_title_bio"
-        app:layout_constraintTop_toBottomOf="@id/tv_body_bio" />
+            <TextView
+                android:id="@+id/tv_title_bio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="@string/bio"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/tv_name_user"
+                app:layout_constraintTop_toBottomOf="@id/tv_name_user" />
 
-    <TextView
-        android:id="@+id/tv_body_company"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="24dp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_title_company"
-        app:layout_constraintTop_toTopOf="@id/tv_title_company"
-        tools:text="Google Inc." />
+            <TextView
+                android:id="@+id/tv_body_bio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_title_bio"
+                app:layout_constraintTop_toTopOf="@id/tv_title_bio"
+                tools:text="Android Developer" />
+
+            <TextView
+                android:id="@+id/tv_title_company"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="@string/company"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/tv_title_bio"
+                app:layout_constraintTop_toBottomOf="@id/tv_body_bio" />
+
+            <TextView
+                android:id="@+id/tv_body_company"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_title_company"
+                app:layout_constraintTop_toTopOf="@id/tv_title_company"
+                tools:text="Google Inc." />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/layout_detail_information_shimmer_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/item_detail_information_placeholder" />
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
@@ -194,7 +226,7 @@
         android:background="@color/dark_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_body_company"
+        app:layout_constraintTop_toBottomOf="@id/layout_detail_information"
         app:tabIndicatorColor="@color/white"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TabLayoutFont"
@@ -208,6 +240,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tab_layout" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
