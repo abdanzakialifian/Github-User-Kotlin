@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IGithubUseCase {
     fun getUsers(query: String): Flow<NetworkResult<PagingData<ListUsers>>>
-    fun getListUsers(): Flow<NetworkResult<PagingData<ListUsers>>>
-    fun getDetailUser(username: String): Flow<NetworkResult<DetailUser>>
-    fun getFollowersUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>>
-    fun getFollowingUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>>
-    fun getRepositoriesUser(username: String): Flow<NetworkResult<PagingData<RepositoriesUser>>>
+    fun getListUsers(): Flow<PagingData<ListUsers>>
+    fun getDetailUser(username: String): Flow<DetailUser>
+    fun getFollowersUser(username: String): Flow<PagingData<ListUsers>>
+    fun getFollowingUser(username: String): Flow<PagingData<ListUsers>>
+    fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUser>>
 }

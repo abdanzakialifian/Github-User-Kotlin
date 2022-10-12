@@ -16,18 +16,17 @@ class GithubUseCase @Inject constructor(private val githubRepository: IGithubRep
     override fun getUsers(query: String): Flow<NetworkResult<PagingData<ListUsers>>> =
         githubRepository.getUsers(query)
 
-    override fun getListUsers(): Flow<NetworkResult<PagingData<ListUsers>>> =
-        githubRepository.getListUsers()
+    override fun getListUsers(): Flow<PagingData<ListUsers>> = githubRepository.getListUsers()
 
-    override fun getDetailUser(username: String): Flow<NetworkResult<DetailUser>> =
+    override fun getDetailUser(username: String): Flow<DetailUser> =
         githubRepository.getDetailUser(username)
 
-    override fun getFollowersUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>> =
+    override fun getFollowersUser(username: String): Flow<PagingData<ListUsers>> =
         githubRepository.getFollowersUser(username)
 
-    override fun getFollowingUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>> =
+    override fun getFollowingUser(username: String): Flow<PagingData<ListUsers>> =
         githubRepository.getFollowingUser(username)
 
-    override fun getRepositoriesUser(username: String): Flow<NetworkResult<PagingData<RepositoriesUser>>> =
+    override fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUser>> =
         githubRepository.getRepositoriesUser(username)
 }

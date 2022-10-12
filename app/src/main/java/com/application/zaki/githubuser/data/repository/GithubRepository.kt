@@ -5,7 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.application.zaki.githubuser.data.source.remote.RemoteDataSource
-import com.application.zaki.githubuser.data.source.remote.paging.*
+import com.application.zaki.githubuser.data.source.remote.paging.ListUsersPagingSource
+import com.application.zaki.githubuser.data.source.remote.paging.RepositoriesUserPagingSource
+import com.application.zaki.githubuser.data.source.remote.paging.UsersPagingSource
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
@@ -21,8 +23,6 @@ class GithubRepository @Inject constructor(
     private val listUsersPagingSource: ListUsersPagingSource,
     private val usersPagingSource: UsersPagingSource,
     private val remoteDataSource: RemoteDataSource,
-    private val followersUsersPagingSource: FollowersUsersPagingSource,
-    private val followingUsersPagingSource: FollowingUsersPagingSource,
     private val repositoriesUserPagingSource: RepositoriesUserPagingSource
 ) : IGithubRepository {
     override fun getUsers(query: String): Flow<NetworkResult<PagingData<ListUsers>>> = flow {
@@ -49,9 +49,7 @@ class GithubRepository @Inject constructor(
         emitAll(data)
     }.flowOn(Dispatchers.IO)
 
-    override fun getListUsers(): Flow<NetworkResult<PagingData<ListUsers>>> = flow {
-        emit(NetworkResult.Loading(null))
-
+    override fun getListUsers(): Flow<PagingData<ListUsers>> = flow {
         val pagingSource = Pager(
             config = PagingConfig(
                 pageSize = 10,
@@ -62,100 +60,38 @@ class GithubRepository @Inject constructor(
         ).flow
 
         val data = pagingSource.map { paging ->
-            NetworkResult.Success(paging.map {
+            paging.map {
                 DataMapper.mapListUsersResponseToListUsers(it)
-            })
+            }
         }
+
         emitAll(data)
     }.flowOn(Dispatchers.IO)
 
-    override fun getDetailUser(username: String): Flow<NetworkResult<DetailUser>> = flow {
-        when (val response = remoteDataSource.getDetailUser(username).last()) {
-            is NetworkResult.Success -> {
-                emit(NetworkResult.Success(DataMapper.mapDetailUserResponseToDetailUser(response.data)))
+    override fun getDetailUser(username: String): Flow<DetailUser> =
+        remoteDataSource.getDetailUser(username)
+            .map {
+                DataMapper.mapDetailUserResponseToDetailUser(it)
             }
-            is NetworkResult.Error -> {
-                emit(NetworkResult.Error(response.errorMessage))
-            }
-            is NetworkResult.Empty -> {
-                emit(NetworkResult.Empty)
-            }
-            is NetworkResult.Loading -> {
-                emit(NetworkResult.Loading(null))
+
+    override fun getFollowersUser(username: String): Flow<PagingData<ListUsers>> =
+        remoteDataSource.getFollowersUser(username).map { pagingData ->
+            pagingData.map {
+                DataMapper.mapListUsersResponseToListUsers(it)
             }
         }
-    }
 
-    override fun getFollowersUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>> =
-        flow {
-            emit(NetworkResult.Loading(null))
-
-            val pagingSource = Pager(
-                config = PagingConfig(
-                    pageSize = 10,
-                    enablePlaceholders = true,
-                    initialLoadSize = 10
-                ),
-                pagingSourceFactory = {
-                    followersUsersPagingSource.setUsername(username)
-                    followersUsersPagingSource
-                }
-            ).flow
-
-            val data = pagingSource.map { paging ->
-                NetworkResult.Success(paging.map {
-                    DataMapper.mapListUsersResponseToListUsers(it)
-                })
+    override fun getFollowingUser(username: String): Flow<PagingData<ListUsers>> =
+        remoteDataSource.getFollowingUser(username).map { pagingData ->
+            pagingData.map {
+                DataMapper.mapListUsersResponseToListUsers(it)
             }
-            emitAll(data)
-        }.flowOn(Dispatchers.IO)
+        }
 
-    override fun getFollowingUser(username: String): Flow<NetworkResult<PagingData<ListUsers>>> =
-        flow {
-            emit(NetworkResult.Loading(null))
-
-            val pagingSource = Pager(
-                config = PagingConfig(
-                    pageSize = 10,
-                    enablePlaceholders = true,
-                    initialLoadSize = 10
-                ),
-                pagingSourceFactory = {
-                    followingUsersPagingSource.setUsername(username)
-                    followingUsersPagingSource
-                }
-            ).flow
-
-            val data = pagingSource.map { paging ->
-                NetworkResult.Success(paging.map {
-                    DataMapper.mapListUsersResponseToListUsers(it)
-                })
+    override fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUser>> =
+        remoteDataSource.getRepositoriesUser(username).map { pagingData ->
+            pagingData.map {
+                DataMapper.mapRepositoriesUserResponseToRepositoriesUser(it)
             }
-            emitAll(data)
-        }.flowOn(Dispatchers.IO)
-
-    override fun getRepositoriesUser(username: String): Flow<NetworkResult<PagingData<RepositoriesUser>>> =
-        flow {
-            emit(NetworkResult.Loading(null))
-
-            val pagingSource = Pager(
-                config = PagingConfig(
-                    pageSize = 10,
-                    enablePlaceholders = true,
-                    initialLoadSize = 10
-                ),
-                pagingSourceFactory = {
-                    repositoriesUserPagingSource.setUsername(username)
-                    repositoriesUserPagingSource
-                }
-            ).flow
-
-            val data = pagingSource.map { paging ->
-                NetworkResult.Success(paging.map {
-                    DataMapper.mapRepositoriesUserResponseToRepositoriesUser(it)
-                })
-            }
-
-            emitAll(data)
-        }.flowOn(Dispatchers.IO)
+        }
 }

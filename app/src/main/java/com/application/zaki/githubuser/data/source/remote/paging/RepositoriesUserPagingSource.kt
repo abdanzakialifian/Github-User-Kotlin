@@ -17,14 +17,9 @@ class RepositoriesUserPagingSource @Inject constructor(private val apiService: A
         return try {
             val position = params.key ?: 1
             val response = apiService.getRepositoriesUser(username ?: "", position, params.loadSize)
-            val data = response.body()
             val listRepositories = ArrayList<RepositoriesUserResponse>()
 
-            if (response.isSuccessful) {
-                data?.let {
-                    listRepositories.addAll(it)
-                }
-            }
+            listRepositories.addAll(response)
 
             LoadResult.Page(
                 data = listRepositories,

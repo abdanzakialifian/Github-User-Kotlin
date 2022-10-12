@@ -4,7 +4,6 @@ import com.application.zaki.githubuser.data.source.remote.response.DetailUserRes
 import com.application.zaki.githubuser.data.source.remote.response.ListUsersResponse
 import com.application.zaki.githubuser.data.source.remote.response.RepositoriesUserResponse
 import com.application.zaki.githubuser.data.source.remote.response.UsersResponse
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -15,37 +14,37 @@ interface ApiService {
         @Query("q") username: String,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
-    ): Response<UsersResponse>
+    ): UsersResponse
 
     @GET("users")
     suspend fun getListUsers(
         @Query("since") since: Int,
         @Query("per_page") perPage: Int
-    ): Response<List<ListUsersResponse>>
+    ): List<ListUsersResponse>
 
     @GET("users/{username}")
     suspend fun getDetailUser(
         @Path("username") username: String
-    ): Response<DetailUserResponse>
+    ): DetailUserResponse
 
     @GET("users/{username}/followers")
     suspend fun getFollowersUser(
         @Path("username") username: String,
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
-    ): Response<List<ListUsersResponse>>
+    ): List<ListUsersResponse>
 
     @GET("users/{username}/following")
     suspend fun getFollowingUser(
         @Path("username") username: String,
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
-    ): Response<List<ListUsersResponse>>
+    ): List<ListUsersResponse>
 
     @GET("users/{username}/repos")
     suspend fun getRepositoriesUser(
         @Path("username") username: String,
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
-    ): Response<List<RepositoriesUserResponse>>
+    ): List<RepositoriesUserResponse>
 }

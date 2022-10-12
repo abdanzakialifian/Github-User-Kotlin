@@ -12,10 +12,10 @@ import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.home.adapter.HomePagingAdapter
 import com.application.zaki.githubuser.presentation.home.viewmodel.HomeViewModel
 import com.application.zaki.githubuser.utils.NetworkResult
+import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,24 +37,24 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             rvUsers.adapter = homePagingAdapter
             rvUsers.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
-                viewModel.getListUser()
+                viewModel.listUsers
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .distinctUntilChanged()
                     .collect {
-                        when (it) {
-                            is NetworkResult.Loading -> {
+                        when (it.status) {
+                            Status.LOADING -> {
                                 rvUsers.gone()
                                 shimmerPlaceholder.visible()
                                 shimmerPlaceholder.startShimmer()
                             }
-                            is NetworkResult.Success -> {
+                            Status.SUCCESS -> {
                                 shimmerPlaceholder.gone()
                                 shimmerPlaceholder.stopShimmer()
                                 rvUsers.visible()
-                                homePagingAdapter.submitData(lifecycle, it.data)
+                                it.data?.let { pagingData ->
+                                    homePagingAdapter.submitData(lifecycle, pagingData)
+                                }
                             }
-                            is NetworkResult.Error -> {}
-                            is NetworkResult.Empty -> {}
+                            Status.ERROR -> {}
                         }
                     }
             }

@@ -8,7 +8,7 @@ import com.application.zaki.githubuser.databinding.FragmentFollowingBinding
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.DetailPagingAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
-import com.application.zaki.githubuser.utils.NetworkResult
+import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,27 +35,29 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
             rvUsersFollowing.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
                 viewModel.getFollowingUser(username)
+                viewModel.listFollowing
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                     .distinctUntilChanged()
                     .collect {
-                        when (it) {
-                            is NetworkResult.Loading -> {
+                        when (it.status) {
+                            Status.LOADING -> {
                                 binding?.apply {
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()
                                     rvUsersFollowing.gone()
                                 }
                             }
-                            is NetworkResult.Success -> {
+                            Status.SUCCESS -> {
                                 binding?.apply {
                                     shimmerPlaceholder.stopShimmer()
                                     shimmerPlaceholder.gone()
                                     rvUsersFollowing.visible()
                                 }
-                                detailPagingAdapter.submitData(lifecycle, it.data)
+                                it.data?.let { pagingData ->
+                                    detailPagingAdapter.submitData(lifecycle, pagingData)
+                                }
                             }
-                            is NetworkResult.Error -> {}
-                            is NetworkResult.Empty -> {}
+                            Status.ERROR -> {}
                         }
                     }
             }

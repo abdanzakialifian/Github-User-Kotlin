@@ -1,37 +1,67 @@
 package com.application.zaki.githubuser.data.source.remote
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.application.zaki.githubuser.data.source.remote.paging.FollowersUsersPagingSource
+import com.application.zaki.githubuser.data.source.remote.paging.FollowingUsersPagingSource
+import com.application.zaki.githubuser.data.source.remote.paging.RepositoriesUserPagingSource
 import com.application.zaki.githubuser.data.source.remote.response.DetailUserResponse
-import com.application.zaki.githubuser.utils.NetworkResult
+import com.application.zaki.githubuser.data.source.remote.response.ListUsersResponse
+import com.application.zaki.githubuser.data.source.remote.response.RepositoriesUserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
-    fun getDetailUser(username: String): Flow<NetworkResult<DetailUserResponse>> {
-        return flow {
-            val response = apiService.getDetailUser(username)
+class RemoteDataSource @Inject constructor(
+    private val apiService: ApiService,
+    private val followersUsersPagingSource: FollowersUsersPagingSource,
+    private val followingUsersPagingSource: FollowingUsersPagingSource,
+    private val repositoriesUserPagingSource: RepositoriesUserPagingSource
+) {
+    fun getDetailUser(username: String): Flow<DetailUserResponse> = flow {
+        val response = apiService.getDetailUser(username)
+        emit(response)
+    }.flowOn(Dispatchers.IO)
 
-            emit(NetworkResult.Loading(null))
-
-            if (response.isSuccessful) {
-                val data = response.body()
-                if (data != null) {
-                    emit(NetworkResult.Success(data))
-                } else {
-                    emit(NetworkResult.Empty)
-                }
-            } else {
-                emit(NetworkResult.Error(response.message()))
-            }
+    fun getFollowersUser(username: String): Flow<PagingData<ListUsersResponse>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = true,
+            initialLoadSize = 10
+        ),
+        pagingSourceFactory = {
+            followersUsersPagingSource.setUsername(username)
+            followersUsersPagingSource
         }
-            .catch {
-                emit(NetworkResult.Error(it.message.toString()))
+    ).flow.flowOn(Dispatchers.IO)
+
+    fun getFollowingUser(username: String): Flow<PagingData<ListUsersResponse>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = true,
+            initialLoadSize = 10
+        ),
+        pagingSourceFactory = {
+            followingUsersPagingSource.setUsername(username)
+            followingUsersPagingSource
+        }
+    ).flow.flowOn(Dispatchers.IO)
+
+    fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUserResponse>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = true,
+                initialLoadSize = 10
+            ),
+            pagingSourceFactory = {
+                repositoriesUserPagingSource.setUsername(username)
+                repositoriesUserPagingSource
             }
-            .flowOn(Dispatchers.IO)
-    }
+        ).flow.flowOn(Dispatchers.IO)
 }

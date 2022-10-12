@@ -19,7 +19,9 @@ class ListUsersPagingSource @Inject constructor(private val apiService: ApiServi
             val listUsers = ArrayList<ListUsersResponse>()
             if (response.isSuccessful) {
                 data?.let {
-                    listUsers.addAll(it)
+                    it.forEach { listUsersResponse ->
+                        listUsers.add(listUsersResponse)
+                    }
                 }
             }
 
