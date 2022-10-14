@@ -3,6 +3,7 @@ package com.application.zaki.githubuser.presentation.detail.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
@@ -50,6 +51,7 @@ class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithub
         _listFollowers.value = Resource.loading()
         viewModelScope.launch {
             githubUseCase.getFollowersUser(username)
+                .cachedIn(viewModelScope)
                 .catch { e ->
                     _listFollowers.value = Resource.error(e.message.toString())
                 }
@@ -63,6 +65,7 @@ class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithub
         _listFollowing.value = Resource.loading()
         viewModelScope.launch {
             githubUseCase.getFollowingUser(username)
+                .cachedIn(viewModelScope)
                 .catch { e ->
                     _listFollowing.value = Resource.error(e.message.toString())
                 }
@@ -76,6 +79,7 @@ class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithub
         _listRepositories.value = Resource.loading()
         viewModelScope.launch {
             githubUseCase.getRepositoriesUser(username)
+                .cachedIn(viewModelScope)
                 .catch { e ->
                     _listRepositories.value = Resource.error(e.message.toString())
                 }

@@ -16,12 +16,9 @@ class FollowingUsersPagingSource @Inject constructor(private val apiService: Api
         return try {
             val position = params.key ?: 1
             val response = apiService.getFollowingUser(username ?: "", position, params.loadSize)
-            val data = response.body()
             val listFollowing = ArrayList<ListUsersResponse>()
-            if (response.isSuccessful) {
-                data?.let {
-                    listFollowing.addAll(it)
-                }
+            response.let {
+                listFollowing.addAll(it)
             }
 
             LoadResult.Page(

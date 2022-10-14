@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.application.zaki.githubuser.R
 import com.application.zaki.githubuser.databinding.FragmentDetailUserBinding
@@ -30,6 +31,13 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
     override fun initView() {
         setDataUser()
         setViewPager()
+        listener()
+    }
+
+    private fun listener() {
+        binding?.imgArrowBack?.setOnClickListener {
+            findNavController().navigate(R.id.action_detailUserFragment_to_homeFragment)
+        }
     }
 
     private fun setDataUser() {

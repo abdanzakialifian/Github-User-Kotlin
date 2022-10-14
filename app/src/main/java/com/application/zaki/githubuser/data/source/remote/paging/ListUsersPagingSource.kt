@@ -15,13 +15,10 @@ class ListUsersPagingSource @Inject constructor(private val apiService: ApiServi
         return try {
             val position = params.key ?: 0
             val response = apiService.getListUsers(position, params.loadSize)
-            val data = response.body()
             val listUsers = ArrayList<ListUsersResponse>()
-            if (response.isSuccessful) {
-                data?.let {
-                    it.forEach { listUsersResponse ->
-                        listUsers.add(listUsersResponse)
-                    }
+            response.let {
+                it.forEach { listUsersResponse ->
+                    listUsers.add(listUsersResponse)
                 }
             }
 

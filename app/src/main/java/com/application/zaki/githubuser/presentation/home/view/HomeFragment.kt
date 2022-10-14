@@ -1,5 +1,7 @@
 package com.application.zaki.githubuser.presentation.home.view
 
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -11,7 +13,6 @@ import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.home.adapter.HomePagingAdapter
 import com.application.zaki.githubuser.presentation.home.viewmodel.HomeViewModel
-import com.application.zaki.githubuser.utils.NetworkResult
 import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
@@ -79,7 +80,10 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                     if (newText == null || newText == "") {
                         setListUser()
                     } else {
-                        viewModel.querySearch.value = newText
+                        // set delay search user so as not be rate limit api
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            viewModel.searchUser(newText)
+                        }, 600)
                         rvUsers.gone()
                         shimmerPlaceholder.visible()
                         shimmerPlaceholder.startShimmer()
@@ -89,23 +93,24 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             })
 
             lifecycleScope.launchWhenStarted {
-                viewModel.searchResult
+                viewModel.users
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                     .collect {
-                        when (it) {
-                            is NetworkResult.Loading -> {
+                        when (it.status) {
+                            Status.LOADING -> {
                                 rvUsers.gone()
                                 shimmerPlaceholder.visible()
                                 shimmerPlaceholder.startShimmer()
                             }
-                            is NetworkResult.Success -> {
-                                homePagingAdapter.submitData(lifecycle, it.data)
+                            Status.SUCCESS -> {
+                                it.data?.let { pagingData ->
+                                    homePagingAdapter.submitData(lifecycle, pagingData)
+                                }
                                 shimmerPlaceholder.gone()
                                 shimmerPlaceholder.stopShimmer()
                                 rvUsers.visible()
                             }
-                            is NetworkResult.Error -> {}
-                            is NetworkResult.Empty -> {}
+                            Status.ERROR -> {}
                         }
                     }
             }

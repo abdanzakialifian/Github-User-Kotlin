@@ -6,12 +6,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.usecase.IGithubUseCase
-import com.application.zaki.githubuser.utils.NetworkResult
 import com.application.zaki.githubuser.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,12 +19,15 @@ class HomeViewModel @Inject constructor(private val githubUseCase: IGithubUseCas
     private val _listUsers = MutableStateFlow<Resource<PagingData<ListUsers>>>(Resource.loading())
     val listUsers: StateFlow<Resource<PagingData<ListUsers>>> = _listUsers
 
+    private val _users = MutableStateFlow<Resource<PagingData<ListUsers>>>(Resource.loading())
+    val users: StateFlow<Resource<PagingData<ListUsers>>> = _users
+
     init {
         getListUsers()
     }
 
     private fun getListUsers() {
-        NetworkResult.Loading(null)
+        _listUsers.value = Resource.loading()
         viewModelScope.launch {
             githubUseCase.getListUsers()
                 .cachedIn(viewModelScope)
@@ -38,20 +40,17 @@ class HomeViewModel @Inject constructor(private val githubUseCase: IGithubUseCas
         }
     }
 
-    // search user with kotlin flow
-    val querySearch = MutableStateFlow("")
-
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val searchResult = querySearch.debounce(300)
-        .distinctUntilChanged()
-        .filter {
-            it.trim().isNotEmpty()
+    fun searchUser(query: String) {
+        _users.value = Resource.loading()
+        viewModelScope.launch {
+            githubUseCase.getUsers(query)
+                .cachedIn(viewModelScope)
+                .catch { e ->
+                    _users.value = Resource.error(e.message.toString())
+                }
+                .collect {
+                    _users.value = Resource.success(it)
+                }
         }
-        .flatMapLatest { query ->
-            githubUseCase.getUsers(query).stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = NetworkResult.Loading(null)
-            )
-        }
+    }
 }

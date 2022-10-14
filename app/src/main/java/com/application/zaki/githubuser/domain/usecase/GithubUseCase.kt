@@ -5,7 +5,6 @@ import com.application.zaki.githubuser.data.repository.IGithubRepository
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
-import com.application.zaki.githubuser.utils.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class GithubUseCase @Inject constructor(private val githubRepository: IGithubRepository) :
     IGithubUseCase {
-    override fun getUsers(query: String): Flow<NetworkResult<PagingData<ListUsers>>> =
+    override fun getUsers(query: String): Flow<PagingData<ListUsers>> =
         githubRepository.getUsers(query)
 
     override fun getListUsers(): Flow<PagingData<ListUsers>> = githubRepository.getListUsers()

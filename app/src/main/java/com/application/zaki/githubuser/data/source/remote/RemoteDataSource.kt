@@ -3,12 +3,11 @@ package com.application.zaki.githubuser.data.source.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.application.zaki.githubuser.data.source.remote.paging.FollowersUsersPagingSource
-import com.application.zaki.githubuser.data.source.remote.paging.FollowingUsersPagingSource
-import com.application.zaki.githubuser.data.source.remote.paging.RepositoriesUserPagingSource
+import com.application.zaki.githubuser.data.source.remote.paging.*
 import com.application.zaki.githubuser.data.source.remote.response.DetailUserResponse
 import com.application.zaki.githubuser.data.source.remote.response.ListUsersResponse
 import com.application.zaki.githubuser.data.source.remote.response.RepositoriesUserResponse
+import com.application.zaki.githubuser.data.source.remote.response.UsersItemResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -21,7 +20,9 @@ class RemoteDataSource @Inject constructor(
     private val apiService: ApiService,
     private val followersUsersPagingSource: FollowersUsersPagingSource,
     private val followingUsersPagingSource: FollowingUsersPagingSource,
-    private val repositoriesUserPagingSource: RepositoriesUserPagingSource
+    private val repositoriesUserPagingSource: RepositoriesUserPagingSource,
+    private val listUsersPagingSource: ListUsersPagingSource,
+    private val usersPagingSource: UsersPagingSource
 ) {
     fun getDetailUser(username: String): Flow<DetailUserResponse> = flow {
         val response = apiService.getDetailUser(username)
@@ -64,4 +65,26 @@ class RemoteDataSource @Inject constructor(
                 repositoriesUserPagingSource
             }
         ).flow.flowOn(Dispatchers.IO)
+
+    fun getListUsers(): Flow<PagingData<ListUsersResponse>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = true,
+            initialLoadSize = 10
+        ),
+        pagingSourceFactory = { listUsersPagingSource }
+    ).flow.flowOn(Dispatchers.IO)
+
+    fun getUsers(query: String): Flow<PagingData<UsersItemResponse>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = true,
+            initialLoadSize = 10,
+            prefetchDistance = 1
+        ),
+        pagingSourceFactory = {
+            usersPagingSource.querySearch(query)
+            usersPagingSource
+        }
+    ).flow.flowOn(Dispatchers.IO)
 }
