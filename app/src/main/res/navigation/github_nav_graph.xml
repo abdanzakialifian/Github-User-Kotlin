@@ -13,15 +13,6 @@
         <action
             android:id="@+id/action_homeFragment_to_detailUserFragment"
             app:destination="@id/detailUserFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_followersFragment"
-            app:destination="@id/followersFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_followingFragment"
-            app:destination="@id/followingFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_repositoryFragment"
-            app:destination="@id/repositoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailUserFragment"
@@ -36,6 +27,9 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_detailUserFragment_to_detailUserFragment"
+            app:destination="@id/detailUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/followersFragment"

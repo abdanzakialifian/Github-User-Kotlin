@@ -2,12 +2,14 @@ package com.application.zaki.githubuser.presentation.home.view
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.map
 import com.application.zaki.githubuser.databinding.FragmentHomeBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
@@ -60,7 +62,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                     }
             }
         }
-        homePagingAdapter.setOnItemClickCallback(object : HomePagingAdapter.OnItemCliCkCallback {
+        homePagingAdapter.setOnItemClickCallback(object : HomePagingAdapter.IOnItemCliCkCallback {
             override fun onItemClicked(item: ListUsers?) {
                 val actionToDetailUserFragment =
                     HomeFragmentDirections.actionHomeFragmentToDetailUserFragment(item?.login ?: "")

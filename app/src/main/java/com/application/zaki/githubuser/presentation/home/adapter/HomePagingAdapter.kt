@@ -19,9 +19,9 @@ class HomePagingAdapter @Inject constructor() :
     PagingDataAdapter<ListUsers, HomePagingAdapter.HomePagingViewHolder>(DIFF_CALLBACK) {
 
     private var isFavorite = false
-    private lateinit var onItemCliCkCallback: OnItemCliCkCallback
+    private lateinit var onItemCliCkCallback: IOnItemCliCkCallback
 
-    fun setOnItemClickCallback(onItemCliCkCallback: OnItemCliCkCallback) {
+    fun setOnItemClickCallback(onItemCliCkCallback: IOnItemCliCkCallback) {
         this.onItemCliCkCallback = onItemCliCkCallback
     }
 
@@ -87,7 +87,7 @@ class HomePagingAdapter @Inject constructor() :
         return position
     }
 
-    interface OnItemCliCkCallback {
+    interface IOnItemCliCkCallback {
         fun onItemClicked(item: ListUsers?)
     }
 

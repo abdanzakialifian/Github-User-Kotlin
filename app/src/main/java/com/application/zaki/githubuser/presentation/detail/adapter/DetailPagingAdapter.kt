@@ -13,12 +13,22 @@ import javax.inject.Inject
 class DetailPagingAdapter @Inject constructor() :
     PagingDataAdapter<ListUsers, DetailPagingAdapter.DetailPagingViewHolder>(DIFF_CALLBACK) {
 
-    class DetailPagingViewHolder(private val binding: ItemListUsersDetailBinding) :
+    private lateinit var onItemClickCallback: IOnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: IOnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
+    inner class DetailPagingViewHolder(private val binding: ItemListUsersDetailBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ListUsers?) {
             binding.apply {
                 imgProfileUser.loadImageUrl(item?.avatarUrl)
                 tvUsernameUser.text = item?.login
+            }
+
+            itemView.setOnClickListener {
+                onItemClickCallback.onItemClicked(item)
             }
         }
     }
@@ -32,6 +42,10 @@ class DetailPagingAdapter @Inject constructor() :
 
     override fun onBindViewHolder(holder: DetailPagingViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    interface IOnItemClickCallback {
+        fun onItemClicked(item: ListUsers?)
     }
 
     companion object {

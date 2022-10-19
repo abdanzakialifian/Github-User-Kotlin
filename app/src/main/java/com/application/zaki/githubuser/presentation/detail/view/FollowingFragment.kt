@@ -4,7 +4,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.application.zaki.githubuser.databinding.FragmentFollowingBinding
+import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.DetailPagingAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
@@ -62,5 +64,15 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
                     }
             }
         }
+        detailPagingAdapter.setOnItemClickCallback(object :
+            DetailPagingAdapter.IOnItemClickCallback {
+            override fun onItemClicked(item: ListUsers?) {
+                val actionToDetailUserFragment =
+                    DetailUserFragmentDirections.actionDetailUserFragmentToDetailUserFragment(
+                        item?.login ?: ""
+                    )
+                findNavController().navigate(actionToDetailUserFragment)
+            }
+        })
     }
 }
