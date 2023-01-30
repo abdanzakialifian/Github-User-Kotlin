@@ -1,7 +1,7 @@
 package com.application.zaki.githubuser.domain.di
 
 import com.application.zaki.githubuser.domain.usecase.GithubUseCase
-import com.application.zaki.githubuser.domain.usecase.IGithubUseCase
+import com.application.zaki.githubuser.domain.interfaces.IGithubUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

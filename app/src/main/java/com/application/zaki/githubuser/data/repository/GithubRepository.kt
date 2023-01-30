@@ -3,10 +3,13 @@ package com.application.zaki.githubuser.data.repository
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.application.zaki.githubuser.data.source.remote.RemoteDataSource
+import com.application.zaki.githubuser.domain.interfaces.IGithubRepository
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
 import com.application.zaki.githubuser.utils.DataMapper
+import com.application.zaki.githubuser.utils.Status
+import com.application.zaki.githubuser.utils.UiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -30,9 +33,13 @@ class GithubRepository @Inject constructor(
             }
         }
 
-    override fun getDetailUser(username: String): Flow<DetailUser> =
+    override fun getDetailUser(username: String): Flow<UiState<DetailUser>> =
         remoteDataSource.getDetailUser(username).map {
-            DataMapper.mapDetailUserResponseToDetailUser(it)
+            when (it.status) {
+                Status.LOADING -> UiState.loading()
+                Status.SUCCESS -> UiState.success(DataMapper.mapDetailUserResponseToDetailUser(it.data))
+                Status.ERROR -> UiState.error(it.message.toString())
+            }
         }
 
     override fun getFollowersUser(username: String): Flow<PagingData<ListUsers>> =

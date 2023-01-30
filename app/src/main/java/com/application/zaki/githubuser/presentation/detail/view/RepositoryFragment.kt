@@ -1,9 +1,11 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentRepositoryBinding
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.RepositoryPagingAdapter
@@ -35,28 +37,30 @@ class RepositoryFragment(private val username: String) :
             rvRepository.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
                 viewModel.getRepositoriesUser(username)
-                viewModel.listRepositories
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .collect {
-                        when (it.status) {
-                            Status.LOADING -> {
-                                binding?.apply {
+                    .collect { pagingData ->
+                        repositoryPagingAdapter.submitData(lifecycle, pagingData)
+                        repositoryPagingAdapter.addLoadStateListener { loadState ->
+                            when(loadState.refresh) {
+                                is LoadState.Loading -> {
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()
                                     rvRepository.gone()
                                 }
-                            }
-                            Status.SUCCESS -> {
-                                binding?.apply {
+                                is LoadState.NotLoading -> {
                                     shimmerPlaceholder.stopShimmer()
                                     shimmerPlaceholder.gone()
                                     rvRepository.visible()
                                 }
-                                it.data?.let { pagingData ->
-                                    repositoryPagingAdapter.submitData(lifecycle, pagingData)
+                                is LoadState.Error -> {
+                                    val castError = loadState.refresh as LoadState.Error
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Error ${castError.error.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
-                            Status.ERROR -> {}
                         }
                     }
             }

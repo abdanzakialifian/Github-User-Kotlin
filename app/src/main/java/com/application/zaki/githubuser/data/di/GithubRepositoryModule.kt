@@ -1,7 +1,7 @@
 package com.application.zaki.githubuser.data.di
 
 import com.application.zaki.githubuser.data.repository.GithubRepository
-import com.application.zaki.githubuser.data.repository.IGithubRepository
+import com.application.zaki.githubuser.domain.interfaces.IGithubRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

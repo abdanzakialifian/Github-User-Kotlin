@@ -1,20 +1,20 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentFollowingBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.DetailPagingAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
-import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,29 +37,30 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
             rvUsersFollowing.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
                 viewModel.getFollowingUser(username)
-                viewModel.listFollowing
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .distinctUntilChanged()
-                    .collect {
-                        when (it.status) {
-                            Status.LOADING -> {
-                                binding?.apply {
+                    .collect { pagingData ->
+                        detailPagingAdapter.submitData(lifecycle, pagingData)
+                        detailPagingAdapter.addLoadStateListener { loadState ->
+                            when (loadState.refresh) {
+                                is LoadState.Loading -> {
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()
                                     rvUsersFollowing.gone()
                                 }
-                            }
-                            Status.SUCCESS -> {
-                                binding?.apply {
+                                is LoadState.NotLoading -> {
                                     shimmerPlaceholder.stopShimmer()
                                     shimmerPlaceholder.gone()
                                     rvUsersFollowing.visible()
                                 }
-                                it.data?.let { pagingData ->
-                                    detailPagingAdapter.submitData(lifecycle, pagingData)
+                                is LoadState.Error -> {
+                                    val castError = loadState.refresh as LoadState.Error
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Error ${castError.error.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
-                            Status.ERROR -> {}
                         }
                     }
             }

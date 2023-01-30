@@ -7,85 +7,49 @@ import androidx.paging.cachedIn
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
-import com.application.zaki.githubuser.domain.usecase.IGithubUseCase
-import com.application.zaki.githubuser.utils.Resource
+import com.application.zaki.githubuser.domain.interfaces.IGithubUseCase
+import com.application.zaki.githubuser.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailUserViewModel @Inject constructor(private val githubUseCase: IGithubUseCase) :
     ViewModel() {
-    private val _detailUser = MutableStateFlow<Resource<DetailUser>>(Resource.loading())
-    val detailUser: StateFlow<Resource<DetailUser>> = _detailUser
+    fun getDetailUser(username: String): StateFlow<UiState<DetailUser>> =
+        githubUseCase.getDetailUser(username).stateIn(
+            initialValue = UiState.loading(),
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(3000L)
+        )
 
-    private val _listFollowers =
-        MutableStateFlow<Resource<PagingData<ListUsers>>>(Resource.loading())
-    val listFollowers: StateFlow<Resource<PagingData<ListUsers>>> = _listFollowers
+    fun getFollowersUser(username: String): StateFlow<PagingData<ListUsers>> =
+        githubUseCase.getFollowersUser(username)
+            .cachedIn(viewModelScope)
+            .stateIn(
+                initialValue = PagingData.empty(),
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(3000L)
+            )
 
-    private val _listFollowing =
-        MutableStateFlow<Resource<PagingData<ListUsers>>>(Resource.loading())
-    val listFollowing: StateFlow<Resource<PagingData<ListUsers>>> = _listFollowing
+    fun getFollowingUser(username: String): StateFlow<PagingData<ListUsers>> =
+        githubUseCase.getFollowingUser(username)
+            .cachedIn(viewModelScope)
+            .stateIn(
+                initialValue = PagingData.empty(),
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(3000L)
+            )
 
-    private val _listRepositories =
-        MutableStateFlow<Resource<PagingData<RepositoriesUser>>>(Resource.loading())
-    val listRepositories: StateFlow<Resource<PagingData<RepositoriesUser>>> = _listRepositories
-
-    fun getDetailUser(username: String) {
-        _detailUser.value = Resource.loading()
-        viewModelScope.launch {
-            githubUseCase.getDetailUser(username)
-                .catch { e ->
-                    _detailUser.value = Resource.error(e.message.toString())
-                }
-                .collect {
-                    _detailUser.value = Resource.success(it)
-                }
-        }
-    }
-
-    fun getFollowersUser(username: String) {
-        _listFollowers.value = Resource.loading()
-        viewModelScope.launch {
-            githubUseCase.getFollowersUser(username)
-                .cachedIn(viewModelScope)
-                .catch { e ->
-                    _listFollowers.value = Resource.error(e.message.toString())
-                }
-                .collect {
-                    _listFollowers.value = Resource.success(it)
-                }
-        }
-    }
-
-    fun getFollowingUser(username: String) {
-        _listFollowing.value = Resource.loading()
-        viewModelScope.launch {
-            githubUseCase.getFollowingUser(username)
-                .cachedIn(viewModelScope)
-                .catch { e ->
-                    _listFollowing.value = Resource.error(e.message.toString())
-                }
-                .collect {
-                    _listFollowing.value = Resource.success(it)
-                }
-        }
-    }
-
-    fun getRepositoriesUser(username: String) {
-        _listRepositories.value = Resource.loading()
-        viewModelScope.launch {
-            githubUseCase.getRepositoriesUser(username)
-                .cachedIn(viewModelScope)
-                .catch { e ->
-                    _listRepositories.value = Resource.error(e.message.toString())
-                }
-                .collect {
-                    _listRepositories.value = Resource.success(it)
-                }
-        }
-    }
+    fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUser>> =
+        githubUseCase.getRepositoriesUser(username)
+            .cachedIn(viewModelScope)
+            .stateIn(
+                initialValue = PagingData.empty(),
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(3000L)
+            )
 }

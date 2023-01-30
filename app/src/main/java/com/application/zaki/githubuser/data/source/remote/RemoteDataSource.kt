@@ -8,6 +8,7 @@ import com.application.zaki.githubuser.data.source.remote.response.DetailUserRes
 import com.application.zaki.githubuser.data.source.remote.response.ListUsersResponse
 import com.application.zaki.githubuser.data.source.remote.response.RepositoriesUserResponse
 import com.application.zaki.githubuser.data.source.remote.response.UsersItemResponse
+import com.application.zaki.githubuser.utils.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,9 +25,14 @@ class RemoteDataSource @Inject constructor(
     private val listUsersPagingSource: ListUsersPagingSource,
     private val usersPagingSource: UsersPagingSource
 ) {
-    fun getDetailUser(username: String): Flow<DetailUserResponse> = flow {
+    fun getDetailUser(username: String): Flow<UiState<DetailUserResponse>> = flow {
         val response = apiService.getDetailUser(username)
-        emit(response)
+        emit(UiState.loading())
+        if (response.isSuccessful) {
+            emit(UiState.success(response.body()))
+        } else {
+            emit(UiState.error(response.errorBody().toString()))
+        }
     }.flowOn(Dispatchers.IO)
 
     fun getFollowersUser(username: String): Flow<PagingData<ListUsersResponse>> = Pager(

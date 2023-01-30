@@ -1,6 +1,7 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -44,7 +45,6 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
         val username = args.username
         lifecycleScope.launchWhenStarted {
             detailUserViewModel.getDetailUser(username)
-            detailUserViewModel.detailUser
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect {
                     when (it.status) {
@@ -63,9 +63,12 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                                 val data = it.data
                                 tvUsernameUser.text = data?.login
                                 imgGithubLogo.setOnClickListener {
-                                    Intent.parseUri(data?.htmlUrl, Intent.URI_INTENT_SCHEME).run {
-                                        startActivity(this)
-                                    }
+                                    startActivity(
+                                        Intent.parseUri(
+                                            data?.htmlUrl,
+                                            Intent.URI_INTENT_SCHEME
+                                        )
+                                    )
                                 }
                                 imgProfileUser.loadImageUrl(data?.avatarUrl)
                                 tvBodyFollowers.text = data?.followers.toString()
@@ -78,8 +81,8 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                             }
                         }
                         Status.ERROR -> {
-                            binding?.apply {
-                            }
+                            Toast.makeText(requireContext(), "ERROR BANGET", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
