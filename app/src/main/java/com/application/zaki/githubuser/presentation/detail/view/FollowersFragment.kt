@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentFollowersBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
+import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.DetailPagingAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
@@ -33,7 +34,11 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
 
     private fun setListFollowers() {
         binding?.apply {
-            rvUsersFollowers.adapter = detailPagingAdapter
+            rvUsersFollowers.adapter = detailPagingAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    detailPagingAdapter.retry()
+                }
+            )
             rvUsersFollowers.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
                 viewModel.getFollowersUser(username)

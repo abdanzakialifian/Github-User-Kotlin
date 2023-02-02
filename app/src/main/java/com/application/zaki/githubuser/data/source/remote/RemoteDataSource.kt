@@ -86,7 +86,6 @@ class RemoteDataSource @Inject constructor(
             pageSize = 10,
             enablePlaceholders = true,
             initialLoadSize = 10,
-            prefetchDistance = 1
         ),
         pagingSourceFactory = {
             usersPagingSource.querySearch(query)

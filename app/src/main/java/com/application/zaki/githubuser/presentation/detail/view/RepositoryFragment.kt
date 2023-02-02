@@ -7,10 +7,10 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentRepositoryBinding
+import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.RepositoryPagingAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
-import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +33,11 @@ class RepositoryFragment(private val username: String) :
 
     private fun setListRepositoriesUser() {
         binding?.apply {
-            rvRepository.adapter = repositoryPagingAdapter
+            rvRepository.adapter = repositoryPagingAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    repositoryPagingAdapter.retry()
+                }
+            )
             rvRepository.setHasFixedSize(true)
             lifecycleScope.launchWhenStarted {
                 viewModel.getRepositoriesUser(username)
@@ -41,7 +45,7 @@ class RepositoryFragment(private val username: String) :
                     .collect { pagingData ->
                         repositoryPagingAdapter.submitData(lifecycle, pagingData)
                         repositoryPagingAdapter.addLoadStateListener { loadState ->
-                            when(loadState.refresh) {
+                            when (loadState.refresh) {
                                 is LoadState.Loading -> {
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()

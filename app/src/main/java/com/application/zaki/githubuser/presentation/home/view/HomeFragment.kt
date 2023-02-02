@@ -2,7 +2,6 @@ package com.application.zaki.githubuser.presentation.home.view
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -17,6 +16,7 @@ import com.application.zaki.githubuser.R
 import com.application.zaki.githubuser.databinding.FragmentHomeBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.User
+import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.home.adapter.HomePagingAdapter
 import com.application.zaki.githubuser.presentation.home.viewmodel.HomeViewModel
@@ -65,7 +65,11 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                 return true
             }
         })
-        binding?.rvUsers?.adapter = homePagingAdapter
+        binding?.rvUsers?.adapter = homePagingAdapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                homePagingAdapter.retry()
+            }
+        )
         homePagingAdapter.setOnItemClickCallback(object : HomePagingAdapter.IOnItemCliCkCallback {
             override fun onItemClicked(item: ListUsers?) {
                 val actionToDetailUserFragment =
@@ -97,7 +101,8 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                     }
                 }
             }
-        })
+        }
+        )
     }
 
     fun favoriteUser(imgFavorite: ImageView, isFavorite: Boolean = false) {
