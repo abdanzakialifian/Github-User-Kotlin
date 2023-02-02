@@ -3,7 +3,6 @@ package com.application.zaki.githubuser.presentation.home.view
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -143,15 +142,10 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     rvUsers.visible()
                                 }
                                 is LoadState.Error -> {
-                                    rvUsers.gone()
                                     shimmerPlaceholder.gone()
                                     shimmerPlaceholder.stopShimmer()
-                                    val castError = loadState.refresh as LoadState.Error
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Error ${castError.error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    rvUsers.gone()
+                                    errorAnimation.visible()
                                 }
                             }
                         }
@@ -173,20 +167,27 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     rvUsers.gone()
                                     shimmerPlaceholder.visible()
                                     shimmerPlaceholder.startShimmer()
-                                }
-                                is LoadState.NotLoading -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsers.visible()
                                     emptyAnimation.gone()
                                 }
+                                is LoadState.NotLoading -> {
+                                    if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsers.gone()
+                                        emptyAnimation.visible()
+                                    } else {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsers.visible()
+                                        emptyAnimation.gone()
+                                    }
+                                }
                                 is LoadState.Error -> {
-                                    val castError = loadState.refresh as LoadState.Error
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Error ${castError.error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    shimmerPlaceholder.gone()
+                                    shimmerPlaceholder.stopShimmer()
+                                    rvUsers.gone()
+                                    emptyAnimation.gone()
+                                    errorAnimation.visible()
                                 }
                             }
                         }

@@ -5,7 +5,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.application.zaki.githubuser.R
 import com.application.zaki.githubuser.databinding.FragmentFavoriteBinding
 import com.application.zaki.githubuser.domain.model.User
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
@@ -66,7 +65,7 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
 
     private fun listener() {
         binding?.imgArrowBack?.setOnClickListener {
-            findNavController().navigate(R.id.action_favoriteFragment_to_homeFragment)
+            findNavController().navigateUp()
         }
     }
 }

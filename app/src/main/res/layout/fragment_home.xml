@@ -108,6 +108,18 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/empty_animation" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/error_animation"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_view"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/error_animation" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_users"
