@@ -2,6 +2,7 @@ package com.application.zaki.githubuser.presentation.home.view
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -172,6 +173,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     shimmerPlaceholder.gone()
                                     shimmerPlaceholder.stopShimmer()
                                     rvUsers.visible()
+                                    emptyAnimation.gone()
                                 }
                                 is LoadState.Error -> {
                                     val castError = loadState.refresh as LoadState.Error

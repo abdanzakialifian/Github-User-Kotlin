@@ -11,6 +11,8 @@ import com.application.zaki.githubuser.domain.model.User
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.favorite.adapter.FavoriteAdapter
 import com.application.zaki.githubuser.presentation.favorite.viewmodel.FavoriteViewModel
+import com.application.zaki.githubuser.utils.gone
+import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +44,14 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
             viewModel.getAllUser()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { users ->
-                    favoriteAdapter.submitList(users)
+                    if (users.isNotEmpty()) {
+                        favoriteAdapter.submitList(users)
+                        binding?.rvFavorite?.visible()
+                        binding?.emptyAnimation?.gone()
+                    } else {
+                        binding?.rvFavorite?.gone()
+                        binding?.emptyAnimation?.visible()
+                    }
                 }
         }
     }
