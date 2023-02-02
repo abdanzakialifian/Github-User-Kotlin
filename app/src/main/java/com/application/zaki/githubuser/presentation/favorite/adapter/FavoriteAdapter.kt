@@ -2,7 +2,6 @@ package com.application.zaki.githubuser.presentation.favorite.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -37,6 +36,9 @@ class FavoriteAdapter @Inject constructor() :
                         )
                     )
                 }
+                itemView.setOnClickListener {
+                    onItemClickCallback.onItemClicked(item)
+                }
             }
         }
     }
@@ -53,6 +55,7 @@ class FavoriteAdapter @Inject constructor() :
     }
 
     interface OnItemClickCallback {
+        fun onItemClicked(user: User)
         fun onFavoriteClicked(user: User)
     }
 

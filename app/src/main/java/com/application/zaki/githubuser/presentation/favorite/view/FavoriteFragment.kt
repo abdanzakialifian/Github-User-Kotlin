@@ -34,6 +34,14 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
         binding?.rvFavorite?.adapter = favoriteAdapter
         favoriteAdapter.setOnItemClickCallback(object :
             FavoriteAdapter.OnItemClickCallback {
+            override fun onItemClicked(user: User) {
+                val navigateToDetailFragment =
+                    FavoriteFragmentDirections.actionFavoriteFragmentToDetailUserFragment(
+                        user.username ?: ""
+                    )
+                findNavController().navigate(navigateToDetailFragment)
+            }
+
             override fun onFavoriteClicked(user: User) {
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.deleteUser(user)
