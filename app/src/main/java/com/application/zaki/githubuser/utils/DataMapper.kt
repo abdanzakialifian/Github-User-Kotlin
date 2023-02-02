@@ -1,5 +1,6 @@
 package com.application.zaki.githubuser.utils
 
+import com.application.zaki.githubuser.data.source.local.entity.UserEntity
 import com.application.zaki.githubuser.data.source.remote.response.DetailUserResponse
 import com.application.zaki.githubuser.data.source.remote.response.ListUsersResponse
 import com.application.zaki.githubuser.data.source.remote.response.RepositoriesUserResponse
@@ -7,6 +8,7 @@ import com.application.zaki.githubuser.data.source.remote.response.UsersItemResp
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
+import com.application.zaki.githubuser.domain.model.User
 
 object DataMapper {
     fun mapListUsersResponseToListUsers(input: ListUsersResponse?): ListUsers = ListUsers(
@@ -20,6 +22,7 @@ object DataMapper {
         login = input?.login,
         avatarUrl = input?.avatarUrl,
         id = input?.id,
+        htmlUrl = input?.htmlUrl,
     )
 
     fun mapDetailUserResponseToDetailUser(input: DetailUserResponse?): DetailUser = DetailUser(
@@ -42,4 +45,11 @@ object DataMapper {
             id = input?.id,
             language = input?.language,
         )
+
+    fun mapListUserEntityToListUser(input: List<UserEntity>): List<User> = input.map { map ->
+        User(id = map.id, image = map.image, username = map.username)
+    }
+
+    fun mapUserToUserEntity(input: User): UserEntity =
+        UserEntity(id = input.id ?: 0, image = input.image ?: "", username = input.username ?: "")
 }

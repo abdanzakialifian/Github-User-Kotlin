@@ -6,6 +6,7 @@ import com.application.zaki.githubuser.domain.interfaces.IGithubUseCase
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
+import com.application.zaki.githubuser.domain.model.User
 import com.application.zaki.githubuser.utils.UiState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -30,4 +31,12 @@ class GithubUseCase @Inject constructor(private val githubRepository: IGithubRep
 
     override fun getRepositoriesUser(username: String): Flow<PagingData<RepositoriesUser>> =
         githubRepository.getRepositoriesUser(username)
+
+    override fun getAllUser(): Flow<List<User>> = githubRepository.getAllUser()
+
+    override fun addUser(user: User) = githubRepository.addUser(user)
+
+    override fun deleteUser(user: User) = githubRepository.deleteUser(user)
+
+    override fun getUserById(id: Int): Boolean = githubRepository.getUserById(id)
 }

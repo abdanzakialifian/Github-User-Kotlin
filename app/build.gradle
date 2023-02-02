@@ -97,10 +97,20 @@ dependencies {
 
     // library circle image
     def circle_image_version = "3.1.0"
-    implementation ("de.hdodenhof:circleimageview:$circle_image_version")
+    implementation("de.hdodenhof:circleimageview:$circle_image_version")
 
     // library chucker
     def chucker_version = "3.5.2"
     debugImplementation "com.github.chuckerteam.chucker:library:$chucker_version"
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
+
+    // library room database
+    def room_version = "2.2.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // library lottie animation
+    def lottie_version = "5.2.0"
+    implementation "com.airbnb.android:lottie:$lottie_version"
 }

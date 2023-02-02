@@ -18,7 +18,6 @@ import javax.inject.Inject
 class HomePagingAdapter @Inject constructor() :
     PagingDataAdapter<ListUsers, HomePagingAdapter.HomePagingViewHolder>(DIFF_CALLBACK) {
 
-    private var isFavorite = false
     private lateinit var onItemCliCkCallback: IOnItemCliCkCallback
 
     fun setOnItemClickCallback(onItemCliCkCallback: IOnItemCliCkCallback) {
@@ -28,6 +27,8 @@ class HomePagingAdapter @Inject constructor() :
     inner class HomePagingViewHolder(private val binding: ItemListUsersBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ListUsers?) {
+            onItemCliCkCallback.onUserId(item?.id ?: 0, binding.imgFavorite)
+
             binding.apply {
                 imgUser.loadImageUrl(item?.avatarUrl)
                 tvUsername.text = item?.login
@@ -41,7 +42,7 @@ class HomePagingAdapter @Inject constructor() :
                 }
 
                 imgFavorite.setOnClickListener {
-                    favoriteUser(imgFavorite, itemView.context)
+                    onItemCliCkCallback.onFavoriteClicked(item, binding.imgFavorite)
                 }
 
                 itemView.setOnClickListener {
@@ -63,32 +64,14 @@ class HomePagingAdapter @Inject constructor() :
         holder.setIsRecyclable(true)
     }
 
-    fun favoriteUser(imgFavorite: ImageView, context: Context) {
-        if (isFavorite) {
-            imgFavorite.setImageDrawable(
-                ContextCompat.getDrawable(
-                    context,
-                    R.drawable.ic_favorite_border_grey_24
-                )
-            )
-            isFavorite = false
-        } else {
-            imgFavorite.setImageDrawable(
-                ContextCompat.getDrawable(
-                    context,
-                    R.drawable.ic_favorite_filled_red_24
-                )
-            )
-            isFavorite = true
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
         return position
     }
 
     interface IOnItemCliCkCallback {
         fun onItemClicked(item: ListUsers?)
+        fun onFavoriteClicked(item: ListUsers?, imageView: ImageView)
+        fun onUserId(id: Int, imageView: ImageView)
     }
 
     companion object {

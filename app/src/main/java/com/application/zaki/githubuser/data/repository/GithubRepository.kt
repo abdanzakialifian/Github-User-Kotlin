@@ -2,11 +2,13 @@ package com.application.zaki.githubuser.data.repository
 
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.application.zaki.githubuser.data.source.local.LocalDataSource
 import com.application.zaki.githubuser.data.source.remote.RemoteDataSource
 import com.application.zaki.githubuser.domain.interfaces.IGithubRepository
 import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.domain.model.RepositoriesUser
+import com.application.zaki.githubuser.domain.model.User
 import com.application.zaki.githubuser.utils.DataMapper
 import com.application.zaki.githubuser.utils.Status
 import com.application.zaki.githubuser.utils.UiState
@@ -17,7 +19,8 @@ import javax.inject.Singleton
 
 @Singleton
 class GithubRepository @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
 ) : IGithubRepository {
     override fun getUsers(query: String): Flow<PagingData<ListUsers>> =
         remoteDataSource.getUsers(query).map { pagingData ->
@@ -62,4 +65,20 @@ class GithubRepository @Inject constructor(
                 DataMapper.mapRepositoriesUserResponseToRepositoriesUser(it)
             }
         }
+
+    override fun getAllUser(): Flow<List<User>> = localDataSource.getAllUser().map {
+        DataMapper.mapListUserEntityToListUser(it)
+    }
+
+    override fun addUser(user: User) {
+        val mappingData = DataMapper.mapUserToUserEntity(user)
+        localDataSource.addUser(mappingData)
+    }
+
+    override fun deleteUser(user: User) {
+        val mappingData = DataMapper.mapUserToUserEntity(user)
+        localDataSource.deleteUser(mappingData)
+    }
+
+    override fun getUserById(id: Int): Boolean = localDataSource.getUserById(id)
 }
