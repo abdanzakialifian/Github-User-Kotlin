@@ -1,6 +1,5 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -51,19 +50,26 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
                                     shimmerPlaceholder.visible()
                                     shimmerPlaceholder.startShimmer()
                                     rvUsersFollowers.gone()
+                                    emptyAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsersFollowers.visible()
+                                    if (loadState.append.endOfPaginationReached && detailPagingAdapter.itemCount == 0) {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsersFollowers.gone()
+                                        emptyAnimation.visible()
+                                    } else {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsersFollowers.visible()
+                                        emptyAnimation.gone()
+                                    }
                                 }
                                 is LoadState.Error -> {
-                                    val castError = loadState.refresh as LoadState.Error
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Error ${castError.error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    shimmerPlaceholder.gone()
+                                    shimmerPlaceholder.stopShimmer()
+                                    rvUsersFollowers.gone()
+                                    errorAnimation.visible()
                                 }
                             }
                         }

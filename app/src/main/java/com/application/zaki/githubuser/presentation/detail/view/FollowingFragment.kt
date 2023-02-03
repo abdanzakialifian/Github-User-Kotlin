@@ -51,19 +51,26 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()
                                     rvUsersFollowing.gone()
+                                    emptyAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
-                                    shimmerPlaceholder.stopShimmer()
-                                    shimmerPlaceholder.gone()
-                                    rvUsersFollowing.visible()
+                                    if (loadState.append.endOfPaginationReached && detailPagingAdapter.itemCount == 0) {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsersFollowing.gone()
+                                        emptyAnimation.visible()
+                                    } else {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsersFollowing.visible()
+                                        emptyAnimation.gone()
+                                    }
                                 }
                                 is LoadState.Error -> {
-                                    val castError = loadState.refresh as LoadState.Error
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Error ${castError.error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    shimmerPlaceholder.gone()
+                                    shimmerPlaceholder.stopShimmer()
+                                    rvUsersFollowing.gone()
+                                    errorAnimation.visible()
                                 }
                             }
                         }

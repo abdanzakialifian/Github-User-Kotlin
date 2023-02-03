@@ -145,6 +145,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     shimmerPlaceholder.gone()
                                     shimmerPlaceholder.stopShimmer()
                                     rvUsers.gone()
+                                    emptyAnimation.gone()
                                     errorAnimation.visible()
                                 }
                             }

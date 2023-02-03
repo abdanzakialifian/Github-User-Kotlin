@@ -1,6 +1,5 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -50,19 +49,26 @@ class RepositoryFragment(private val username: String) :
                                     shimmerPlaceholder.startShimmer()
                                     shimmerPlaceholder.visible()
                                     rvRepository.gone()
+                                    emptyAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
-                                    shimmerPlaceholder.stopShimmer()
-                                    shimmerPlaceholder.gone()
-                                    rvRepository.visible()
+                                    if (loadState.append.endOfPaginationReached && repositoryPagingAdapter.itemCount == 0) {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvRepository.gone()
+                                        emptyAnimation.visible()
+                                    } else {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvRepository.visible()
+                                        emptyAnimation.gone()
+                                    }
                                 }
                                 is LoadState.Error -> {
-                                    val castError = loadState.refresh as LoadState.Error
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Error ${castError.error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    shimmerPlaceholder.gone()
+                                    shimmerPlaceholder.stopShimmer()
+                                    rvRepository.gone()
+                                    errorAnimation.visible()
                                 }
                             }
                         }
