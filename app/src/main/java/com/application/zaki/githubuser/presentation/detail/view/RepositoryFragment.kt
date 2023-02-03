@@ -50,6 +50,7 @@ class RepositoryFragment(private val username: String) :
                                     shimmerPlaceholder.visible()
                                     rvRepository.gone()
                                     emptyAnimation.gone()
+                                    errorAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
                                     if (loadState.append.endOfPaginationReached && repositoryPagingAdapter.itemCount == 0) {
@@ -57,11 +58,13 @@ class RepositoryFragment(private val username: String) :
                                         shimmerPlaceholder.stopShimmer()
                                         rvRepository.gone()
                                         emptyAnimation.visible()
+                                        errorAnimation.gone()
                                     } else {
                                         shimmerPlaceholder.gone()
                                         shimmerPlaceholder.stopShimmer()
                                         rvRepository.visible()
                                         emptyAnimation.gone()
+                                        errorAnimation.gone()
                                     }
                                 }
                                 is LoadState.Error -> {

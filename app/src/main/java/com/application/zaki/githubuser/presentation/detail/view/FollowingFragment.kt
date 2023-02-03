@@ -52,6 +52,7 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
                                     shimmerPlaceholder.visible()
                                     rvUsersFollowing.gone()
                                     emptyAnimation.gone()
+                                    errorAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
                                     if (loadState.append.endOfPaginationReached && detailPagingAdapter.itemCount == 0) {
@@ -59,11 +60,13 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
                                         shimmerPlaceholder.stopShimmer()
                                         rvUsersFollowing.gone()
                                         emptyAnimation.visible()
+                                        errorAnimation.gone()
                                     } else {
                                         shimmerPlaceholder.gone()
                                         shimmerPlaceholder.stopShimmer()
                                         rvUsersFollowing.visible()
                                         emptyAnimation.gone()
+                                        errorAnimation.gone()
                                     }
                                 }
                                 is LoadState.Error -> {

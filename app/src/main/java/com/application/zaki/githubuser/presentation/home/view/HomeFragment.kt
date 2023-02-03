@@ -24,6 +24,7 @@ import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -160,6 +161,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             lifecycleScope.launchWhenStarted {
                 viewModel.searchUser(value)
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .distinctUntilChanged()
                     .collect { pagingData ->
                         homePagingAdapter.submitData(lifecycle, pagingData)
                         homePagingAdapter.addLoadStateListener { loadState ->
@@ -169,6 +171,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     shimmerPlaceholder.visible()
                                     shimmerPlaceholder.startShimmer()
                                     emptyAnimation.gone()
+                                    errorAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
                                     if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
@@ -176,11 +179,13 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                         shimmerPlaceholder.stopShimmer()
                                         rvUsers.gone()
                                         emptyAnimation.visible()
+                                        errorAnimation.gone()
                                     } else {
                                         shimmerPlaceholder.gone()
                                         shimmerPlaceholder.stopShimmer()
                                         rvUsers.visible()
                                         emptyAnimation.gone()
+                                        errorAnimation.gone()
                                     }
                                 }
                                 is LoadState.Error -> {
