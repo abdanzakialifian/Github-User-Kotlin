@@ -19,12 +19,16 @@ import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.home.adapter.HomePagingAdapter
 import com.application.zaki.githubuser.presentation.home.viewmodel.HomeViewModel
+import com.application.zaki.githubuser.utils.getQueryTextChangeStateFlow
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,6 +69,22 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                 return true
             }
         })
+        lifecycleScope.launch {
+            binding?.searchView?.getQueryTextChangeStateFlow()
+                ?.debounce(600L)
+                ?.filter { searchQuery ->
+                    if (searchQuery.isEmpty()) {
+                        return@filter false
+                    } else {
+                        return@filter true
+                    }
+                }
+                ?.distinctUntilChanged()
+                ?.flowOn(Dispatchers.Default)
+                ?.collect {
+
+                }
+        }
         binding?.rvUsers?.adapter = homePagingAdapter.withLoadStateFooter(
             footer = LoadingStateAdapter {
                 homePagingAdapter.retry()
@@ -136,11 +156,23 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                                     rvUsers.gone()
                                     shimmerPlaceholder.visible()
                                     shimmerPlaceholder.startShimmer()
+                                    emptyAnimation.gone()
+                                    errorAnimation.gone()
                                 }
                                 is LoadState.NotLoading -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsers.visible()
+                                    if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsers.gone()
+                                        emptyAnimation.visible()
+                                        errorAnimation.gone()
+                                    } else {
+                                        shimmerPlaceholder.gone()
+                                        shimmerPlaceholder.stopShimmer()
+                                        rvUsers.visible()
+                                        emptyAnimation.gone()
+                                        errorAnimation.gone()
+                                    }
                                 }
                                 is LoadState.Error -> {
                                     shimmerPlaceholder.gone()
@@ -161,7 +193,6 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             lifecycleScope.launchWhenStarted {
                 viewModel.searchUser(value)
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                    .distinctUntilChanged()
                     .collect { pagingData ->
                         homePagingAdapter.submitData(lifecycle, pagingData)
                         homePagingAdapter.addLoadStateListener { loadState ->
