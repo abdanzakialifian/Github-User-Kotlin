@@ -1,9 +1,6 @@
 package com.application.zaki.githubuser.presentation.home.view
 
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -19,16 +16,11 @@ import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.home.adapter.HomePagingAdapter
 import com.application.zaki.githubuser.presentation.home.viewmodel.HomeViewModel
-import com.application.zaki.githubuser.utils.getQueryTextChangeStateFlow
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,38 +44,18 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                 HomeFragmentDirections.actionHomeFragmentToFavoriteFragment()
             findNavController().navigate(navigateToFavoriteFragment)
         }
-        binding?.searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText == null || newText == "") {
-                    setListUser()
-                } else {
-                    // set delay search user so as not be rate limit api
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        searchUser(newText)
-                    }, 600)
-                }
-                return true
-            }
-        })
-        lifecycleScope.launch {
-            binding?.searchView?.getQueryTextChangeStateFlow()
-                ?.debounce(600L)
-                ?.filter { searchQuery ->
-                    if (searchQuery.isEmpty()) {
-                        return@filter false
-                    } else {
-                        return@filter true
+        binding?.searchView?.let {
+            lifecycleScope.launchWhenStarted {
+                viewModel.searchFlow(it)
+                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .collect {
+                        if (it.isEmpty()) {
+                            setListUser()
+                        } else {
+                            searchUser(it)
+                        }
                     }
-                }
-                ?.distinctUntilChanged()
-                ?.flowOn(Dispatchers.Default)
-                ?.collect {
-
-                }
+            }
         }
         binding?.rvUsers?.adapter = homePagingAdapter.withLoadStateFooter(
             footer = LoadingStateAdapter {
@@ -146,7 +118,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
     private fun setListUser() {
         binding?.apply {
             lifecycleScope.launchWhenStarted {
-                viewModel.getListUsers()
+                viewModel.getListUsers
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
                         homePagingAdapter.submitData(lifecycle, pagingData)

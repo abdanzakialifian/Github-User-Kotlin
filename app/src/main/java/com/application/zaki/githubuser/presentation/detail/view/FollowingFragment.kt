@@ -1,6 +1,5 @@
 package com.application.zaki.githubuser.presentation.detail.view
 
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle

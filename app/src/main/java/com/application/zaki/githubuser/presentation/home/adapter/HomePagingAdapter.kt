@@ -1,15 +1,12 @@
 package com.application.zaki.githubuser.presentation.home.adapter
 
-import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.application.zaki.githubuser.R
 import com.application.zaki.githubuser.databinding.ItemListUsersBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
 import com.application.zaki.githubuser.utils.loadImageUrl

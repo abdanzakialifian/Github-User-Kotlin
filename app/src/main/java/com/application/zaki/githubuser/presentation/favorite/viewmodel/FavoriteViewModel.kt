@@ -14,7 +14,7 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(private val githubUseCase: GithubUseCase) :
     ViewModel() {
 
-    fun getAllUser(): StateFlow<List<User>> = githubUseCase.getAllUser().stateIn(
+    val getAllUser: StateFlow<List<User>> = githubUseCase.getAllUser().stateIn(
         initialValue = listOf(),
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(3000L)
