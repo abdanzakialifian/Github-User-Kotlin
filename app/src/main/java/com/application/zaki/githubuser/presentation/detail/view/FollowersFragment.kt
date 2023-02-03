@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentFollowersBinding
 import com.application.zaki.githubuser.domain.model.ListUsers
@@ -47,32 +48,13 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
                         detailPagingAdapter.addLoadStateListener { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.Loading -> {
-                                    shimmerPlaceholder.visible()
-                                    shimmerPlaceholder.startShimmer()
-                                    rvUsersFollowers.gone()
-                                    emptyAnimation.gone()
-                                    errorAnimation.gone()
+                                    showShimmerLoading()
                                 }
                                 is LoadState.NotLoading -> {
-                                    if (loadState.append.endOfPaginationReached && detailPagingAdapter.itemCount == 0) {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsersFollowers.gone()
-                                        emptyAnimation.visible()
-                                        errorAnimation.gone()
-                                    } else {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsersFollowers.visible()
-                                        emptyAnimation.gone()
-                                        errorAnimation.gone()
-                                    }
+                                    showDataFollowers(loadState)
                                 }
                                 is LoadState.Error -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsersFollowers.gone()
-                                    errorAnimation.visible()
+                                    showErrorAnimation()
                                 }
                             }
                         }
@@ -83,12 +65,53 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
         detailPagingAdapter.setOnItemClickCallback(object :
             DetailPagingAdapter.IOnItemClickCallback {
             override fun onItemClicked(item: ListUsers?) {
-                val actionToDetailUserFragment =
-                    DetailUserFragmentDirections.actionDetailUserFragmentToDetailUserFragment(
-                        item?.login ?: ""
-                    )
-                findNavController().navigate(actionToDetailUserFragment)
+                navigateToDetailPage(item)
             }
         })
+    }
+
+    private fun navigateToDetailPage(item: ListUsers?) {
+        val actionToDetailUserFragment =
+            DetailUserFragmentDirections.actionDetailUserFragmentToDetailUserFragment(
+                item?.login ?: ""
+            )
+        findNavController().navigate(actionToDetailUserFragment)
+    }
+
+    private fun showShimmerLoading() {
+        binding?.apply {
+            shimmerPlaceholder.visible()
+            shimmerPlaceholder.startShimmer()
+            rvUsersFollowers.gone()
+            emptyAnimation.gone()
+            errorAnimation.gone()
+        }
+    }
+
+    private fun showDataFollowers(loadState: CombinedLoadStates) {
+        binding?.apply {
+            if (loadState.append.endOfPaginationReached && detailPagingAdapter.itemCount == 0) {
+                shimmerPlaceholder.gone()
+                shimmerPlaceholder.stopShimmer()
+                rvUsersFollowers.gone()
+                emptyAnimation.visible()
+                errorAnimation.gone()
+            } else {
+                shimmerPlaceholder.gone()
+                shimmerPlaceholder.stopShimmer()
+                rvUsersFollowers.visible()
+                emptyAnimation.gone()
+                errorAnimation.gone()
+            }
+        }
+    }
+
+    private fun showErrorAnimation() {
+        binding?.apply {
+            shimmerPlaceholder.gone()
+            shimmerPlaceholder.stopShimmer()
+            rvUsersFollowers.gone()
+            errorAnimation.visible()
+        }
     }
 }

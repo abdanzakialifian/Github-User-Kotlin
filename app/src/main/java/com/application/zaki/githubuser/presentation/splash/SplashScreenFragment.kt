@@ -14,10 +14,14 @@ class SplashScreenFragment : BaseVBFragment<FragmentSplashScreenBinding>() {
 
     override fun initView() {
         Handler(Looper.getMainLooper()).postDelayed({
-            val navigateToHomeFragment =
-                SplashScreenFragmentDirections.actionSplashScreenFragmentToHomeFragment()
-            findNavController().navigate(navigateToHomeFragment)
+            navigateToHomePage()
         }, DELAY_SPLASH)
+    }
+
+    private fun navigateToHomePage() {
+        val navigateToHomeFragment =
+            SplashScreenFragmentDirections.actionSplashScreenFragmentToHomeFragment()
+        findNavController().navigate(navigateToHomeFragment)
     }
 
     companion object {

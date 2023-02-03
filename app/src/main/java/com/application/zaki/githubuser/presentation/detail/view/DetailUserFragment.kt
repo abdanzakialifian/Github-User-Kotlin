@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.application.zaki.githubuser.R
 import com.application.zaki.githubuser.databinding.FragmentDetailUserBinding
+import com.application.zaki.githubuser.domain.model.DetailUser
 import com.application.zaki.githubuser.presentation.base.BaseVBFragment
 import com.application.zaki.githubuser.presentation.detail.adapter.ViewPagerAdapter
 import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserViewModel
@@ -49,43 +50,50 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                 .collect {
                     when (it.status) {
                         Status.LOADING -> {
-                            binding?.apply {
-                                layoutDetailInformationNotShimmerPlaceholder.gone()
-                                layoutDetailInformationShimmerPlaceholder.visible()
-                                layoutDetailInformationShimmerPlaceholder.startShimmer()
-                            }
+                            showShimmerLoading()
                         }
                         Status.SUCCESS -> {
-                            binding?.apply {
-                                layoutDetailInformationNotShimmerPlaceholder.visible()
-                                layoutDetailInformationShimmerPlaceholder.gone()
-                                layoutDetailInformationShimmerPlaceholder.stopShimmer()
-                                val data = it.data
-                                tvUsernameUser.text = data?.login
-                                imgGithubLogo.setOnClickListener {
-                                    startActivity(
-                                        Intent.parseUri(
-                                            data?.htmlUrl,
-                                            Intent.URI_INTENT_SCHEME
-                                        )
-                                    )
-                                }
-                                imgProfileUser.loadImageUrl(data?.avatarUrl)
-                                tvBodyFollowers.text = data?.followers.toString()
-                                tvBodyFollowing.text = data?.following.toString()
-                                tvBodyRepository.text = data?.publicRepos.toString()
-                                tvNameUser.text = data?.name
-                                tvBodyBio.text = data?.bio ?: resources.getString(R.string.dash)
-                                tvBodyCompany.text =
-                                    data?.company ?: resources.getString(R.string.dash)
-                            }
+                            showUserData(it.data)
                         }
                         Status.ERROR -> {
-                            Toast.makeText(requireContext(), "ERROR BANGET", Toast.LENGTH_SHORT)
+                            Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }
                 }
+        }
+    }
+
+    private fun showShimmerLoading() {
+        binding?.apply {
+            layoutDetailInformationNotShimmerPlaceholder.gone()
+            layoutDetailInformationShimmerPlaceholder.visible()
+            layoutDetailInformationShimmerPlaceholder.startShimmer()
+        }
+    }
+
+    private fun showUserData(data: DetailUser?) {
+        binding?.apply {
+            layoutDetailInformationNotShimmerPlaceholder.visible()
+            layoutDetailInformationShimmerPlaceholder.gone()
+            layoutDetailInformationShimmerPlaceholder.stopShimmer()
+            tvUsernameUser.text = data?.login
+            imgGithubLogo.setOnClickListener {
+                startActivity(
+                    Intent.parseUri(
+                        data?.htmlUrl,
+                        Intent.URI_INTENT_SCHEME
+                    )
+                )
+            }
+            imgProfileUser.loadImageUrl(data?.avatarUrl)
+            tvBodyFollowers.text = data?.followers.toString()
+            tvBodyFollowing.text = data?.following.toString()
+            tvBodyRepository.text = data?.publicRepos.toString()
+            tvNameUser.text = data?.name
+            tvBodyBio.text = data?.bio ?: resources.getString(R.string.dash)
+            tvBodyCompany.text =
+                data?.company ?: resources.getString(R.string.dash)
         }
     }
 

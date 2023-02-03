@@ -4,6 +4,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.application.zaki.githubuser.databinding.FragmentRepositoryBinding
 import com.application.zaki.githubuser.presentation.adapter.LoadingStateAdapter
@@ -46,37 +47,55 @@ class RepositoryFragment(private val username: String) :
                         repositoryPagingAdapter.addLoadStateListener { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.Loading -> {
-                                    shimmerPlaceholder.startShimmer()
-                                    shimmerPlaceholder.visible()
-                                    rvRepository.gone()
-                                    emptyAnimation.gone()
-                                    errorAnimation.gone()
+                                    showShimmerLoading()
                                 }
                                 is LoadState.NotLoading -> {
-                                    if (loadState.append.endOfPaginationReached && repositoryPagingAdapter.itemCount == 0) {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvRepository.gone()
-                                        emptyAnimation.visible()
-                                        errorAnimation.gone()
-                                    } else {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvRepository.visible()
-                                        emptyAnimation.gone()
-                                        errorAnimation.gone()
-                                    }
+                                    showDataRepository(loadState)
                                 }
                                 is LoadState.Error -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvRepository.gone()
-                                    errorAnimation.visible()
+                                    showErrorAnimation()
                                 }
                             }
                         }
                     }
             }
+        }
+    }
+
+    private fun showShimmerLoading() {
+        binding?.apply {
+            shimmerPlaceholder.startShimmer()
+            shimmerPlaceholder.visible()
+            rvRepository.gone()
+            emptyAnimation.gone()
+            errorAnimation.gone()
+        }
+    }
+
+    private fun showDataRepository(loadState: CombinedLoadStates) {
+        binding?.apply {
+            if (loadState.append.endOfPaginationReached && repositoryPagingAdapter.itemCount == 0) {
+                shimmerPlaceholder.gone()
+                shimmerPlaceholder.stopShimmer()
+                rvRepository.gone()
+                emptyAnimation.visible()
+                errorAnimation.gone()
+            } else {
+                shimmerPlaceholder.gone()
+                shimmerPlaceholder.stopShimmer()
+                rvRepository.visible()
+                emptyAnimation.gone()
+                errorAnimation.gone()
+            }
+        }
+    }
+
+    private fun showErrorAnimation() {
+        binding?.apply {
+            shimmerPlaceholder.gone()
+            shimmerPlaceholder.stopShimmer()
+            rvRepository.gone()
+            errorAnimation.visible()
         }
     }
 }

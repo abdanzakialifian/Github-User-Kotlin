@@ -34,11 +34,7 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
         favoriteAdapter.setOnItemClickCallback(object :
             FavoriteAdapter.OnItemClickCallback {
             override fun onItemClicked(user: User) {
-                val navigateToDetailFragment =
-                    FavoriteFragmentDirections.actionFavoriteFragmentToDetailUserFragment(
-                        user.username ?: ""
-                    )
-                findNavController().navigate(navigateToDetailFragment)
+                navigateToDetailPage(user.username ?: "")
             }
 
             override fun onFavoriteClicked(user: User) {
@@ -52,12 +48,9 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { users ->
                     if (users.isNotEmpty()) {
-                        favoriteAdapter.submitList(users)
-                        binding?.rvFavorite?.visible()
-                        binding?.emptyAnimation?.gone()
+                        showUserFavorite(users)
                     } else {
-                        binding?.rvFavorite?.gone()
-                        binding?.emptyAnimation?.visible()
+                        showEmptyAnimation()
                     }
                 }
         }
@@ -67,5 +60,26 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
         binding?.imgArrowBack?.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    private fun showUserFavorite(users: List<User>) {
+        binding?.apply {
+            favoriteAdapter.submitList(users)
+            rvFavorite.visible()
+            emptyAnimation.gone()
+        }
+    }
+
+    private fun showEmptyAnimation() {
+        binding?.apply {
+            rvFavorite.gone()
+            emptyAnimation.visible()
+        }
+    }
+
+    private fun navigateToDetailPage(username: String) {
+        val navigateToDetailFragment =
+            FavoriteFragmentDirections.actionFavoriteFragmentToDetailUserFragment(username)
+        findNavController().navigate(navigateToDetailFragment)
     }
 }

@@ -40,9 +40,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
 
     private fun listener() {
         binding?.imgFavorite?.setOnClickListener {
-            val navigateToFavoriteFragment =
-                HomeFragmentDirections.actionHomeFragmentToFavoriteFragment()
-            findNavController().navigate(navigateToFavoriteFragment)
+            navigateToFavoritePage()
         }
         binding?.searchView?.let {
             lifecycleScope.launchWhenStarted {
@@ -64,40 +62,21 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
         )
         homePagingAdapter.setOnItemClickCallback(object : HomePagingAdapter.IOnItemCliCkCallback {
             override fun onItemClicked(item: ListUsers?) {
-                val actionToDetailUserFragment =
-                    HomeFragmentDirections.actionHomeFragmentToDetailUserFragment(item?.login ?: "")
-                findNavController().navigate(actionToDetailUserFragment)
+                navigateToDetailPage(item?.login ?: "")
             }
 
             override fun onFavoriteClicked(item: ListUsers?, imageView: ImageView) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val isFavorite = viewModel.getUserById(item?.id ?: 0)
-                    val user = User(id = item?.id, image = item?.avatarUrl, username = item?.login)
-                    if (isFavorite) {
-                        viewModel.deleteUser(user)
-                        favoriteUser(imageView, false)
-                    } else {
-                        viewModel.addUser(user)
-                        favoriteUser(imageView, true)
-                    }
-                }
+                handleFavoriteButton(item, imageView)
             }
 
             override fun onUserId(id: Int, imageView: ImageView) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val isFavorite = viewModel.getUserById(id)
-                    if (isFavorite) {
-                        favoriteUser(imageView, true)
-                    } else {
-                        favoriteUser(imageView, false)
-                    }
-                }
+                handleFavoriteButtonState(id, imageView)
             }
         }
         )
     }
 
-    fun favoriteUser(imgFavorite: ImageView, isFavorite: Boolean = false) {
+    private fun favoriteUser(imgFavorite: ImageView, isFavorite: Boolean = false) {
         if (isFavorite) {
             imgFavorite.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -125,33 +104,17 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                         homePagingAdapter.addLoadStateListener { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.Loading -> {
-                                    rvUsers.gone()
-                                    shimmerPlaceholder.visible()
-                                    shimmerPlaceholder.startShimmer()
-                                    emptyAnimation.gone()
-                                    errorAnimation.gone()
+                                    showShimmerLoading()
                                 }
                                 is LoadState.NotLoading -> {
                                     if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsers.gone()
-                                        emptyAnimation.visible()
-                                        errorAnimation.gone()
+                                        showEmptyAnimation()
                                     } else {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsers.visible()
-                                        emptyAnimation.gone()
-                                        errorAnimation.gone()
+                                        showListUser()
                                     }
                                 }
                                 is LoadState.Error -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsers.gone()
-                                    emptyAnimation.gone()
-                                    errorAnimation.visible()
+                                    showErrorAnimation()
                                 }
                             }
                         }
@@ -170,38 +133,99 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                         homePagingAdapter.addLoadStateListener { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.Loading -> {
-                                    rvUsers.gone()
-                                    shimmerPlaceholder.visible()
-                                    shimmerPlaceholder.startShimmer()
-                                    emptyAnimation.gone()
-                                    errorAnimation.gone()
+                                    showShimmerLoading()
                                 }
                                 is LoadState.NotLoading -> {
                                     if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsers.gone()
-                                        emptyAnimation.visible()
-                                        errorAnimation.gone()
+                                        showEmptyAnimation()
                                     } else {
-                                        shimmerPlaceholder.gone()
-                                        shimmerPlaceholder.stopShimmer()
-                                        rvUsers.visible()
-                                        emptyAnimation.gone()
-                                        errorAnimation.gone()
+                                        showListUser()
                                     }
                                 }
                                 is LoadState.Error -> {
-                                    shimmerPlaceholder.gone()
-                                    shimmerPlaceholder.stopShimmer()
-                                    rvUsers.gone()
-                                    emptyAnimation.gone()
-                                    errorAnimation.visible()
+                                    showErrorAnimation()
                                 }
                             }
                         }
                     }
             }
+        }
+    }
+
+    private fun handleFavoriteButton(item: ListUsers?, imageView: ImageView) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val isFavorite = viewModel.getUserById(item?.id ?: 0)
+            val user = User(id = item?.id, image = item?.avatarUrl, username = item?.login)
+            if (isFavorite) {
+                viewModel.deleteUser(user)
+                favoriteUser(imageView, false)
+            } else {
+                viewModel.addUser(user)
+                favoriteUser(imageView, true)
+            }
+        }
+    }
+
+    private fun handleFavoriteButtonState(id: Int, imageView: ImageView) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val isFavorite = viewModel.getUserById(id)
+            if (isFavorite) {
+                favoriteUser(imageView, true)
+            } else {
+                favoriteUser(imageView, false)
+            }
+        }
+    }
+
+    private fun navigateToFavoritePage() {
+        val navigateToFavoriteFragment =
+            HomeFragmentDirections.actionHomeFragmentToFavoriteFragment()
+        findNavController().navigate(navigateToFavoriteFragment)
+    }
+
+    private fun navigateToDetailPage(username: String) {
+        val actionToDetailUserFragment =
+            HomeFragmentDirections.actionHomeFragmentToDetailUserFragment(username)
+        findNavController().navigate(actionToDetailUserFragment)
+    }
+
+    private fun showShimmerLoading() {
+        binding?.apply {
+            rvUsers.gone()
+            shimmerPlaceholder.visible()
+            shimmerPlaceholder.startShimmer()
+            emptyAnimation.gone()
+            errorAnimation.gone()
+        }
+    }
+
+    private fun showEmptyAnimation() {
+        binding?.apply {
+            shimmerPlaceholder.gone()
+            shimmerPlaceholder.stopShimmer()
+            rvUsers.gone()
+            emptyAnimation.visible()
+            errorAnimation.gone()
+        }
+    }
+
+    private fun showErrorAnimation() {
+        binding?.apply {
+            shimmerPlaceholder.gone()
+            shimmerPlaceholder.stopShimmer()
+            rvUsers.gone()
+            emptyAnimation.gone()
+            errorAnimation.visible()
+        }
+    }
+
+    private fun showListUser() {
+        binding?.apply {
+            shimmerPlaceholder.gone()
+            shimmerPlaceholder.stopShimmer()
+            rvUsers.visible()
+            emptyAnimation.gone()
+            errorAnimation.gone()
         }
     }
 }
