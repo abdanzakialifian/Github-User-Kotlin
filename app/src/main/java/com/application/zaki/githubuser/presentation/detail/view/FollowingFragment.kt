@@ -40,9 +40,9 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
                 }
             )
             rvUsersFollowing.setHasFixedSize(true)
-            lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.getFollowingUser(username)
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
                         detailPagingAdapter.submitData(lifecycle, pagingData)
                         detailPagingAdapter.addLoadStateListener { loadState ->
@@ -112,5 +112,10 @@ class FollowingFragment(private val username: String) : BaseVBFragment<FragmentF
             rvUsersFollowing.gone()
             errorAnimation.visible()
         }
+    }
+
+    override fun onDestroyView() {
+        binding?.rvUsersFollowing?.adapter = null
+        super.onDestroyView()
     }
 }

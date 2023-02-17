@@ -39,9 +39,9 @@ class RepositoryFragment(private val username: String) :
                 }
             )
             rvRepository.setHasFixedSize(true)
-            lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.getRepositoriesUser(username)
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
                         repositoryPagingAdapter.submitData(lifecycle, pagingData)
                         repositoryPagingAdapter.addLoadStateListener { loadState ->
@@ -97,5 +97,10 @@ class RepositoryFragment(private val username: String) :
             rvRepository.gone()
             errorAnimation.visible()
         }
+    }
+
+    override fun onDestroyView() {
+        binding?.rvRepository?.adapter = null
+        super.onDestroyView()
     }
 }

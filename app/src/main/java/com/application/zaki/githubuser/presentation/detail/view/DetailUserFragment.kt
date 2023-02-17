@@ -44,9 +44,9 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
 
     private fun setDataUser() {
         val username = args.username
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             detailUserViewModel.getDetailUser(username)
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect {
                     when (it.status) {
                         Status.LOADING -> {
@@ -100,7 +100,7 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
     private fun setViewPager() {
         val viewPager = binding?.viewPager
         val tabLayout = binding?.tabLayout
-        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        val adapter = ViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         adapter.addFragment(RepositoryFragment(args.username))
         adapter.addFragment(FollowersFragment(args.username))
         adapter.addFragment(FollowingFragment(args.username))
@@ -110,6 +110,11 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
                 tab.text = resources.getString(TAB_TITLES[position])
             }.attach()
         }
+    }
+
+    override fun onDestroyView() {
+        binding?.viewPager?.adapter = null
+        super.onDestroyView()
     }
 
     companion object {

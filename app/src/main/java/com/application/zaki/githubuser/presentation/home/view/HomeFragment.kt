@@ -43,9 +43,9 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             navigateToFavoritePage()
         }
         binding?.searchView?.let {
-            lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.searchFlow(it)
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect {
                         if (it.isEmpty()) {
                             setListUser()
@@ -96,9 +96,9 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
 
     private fun setListUser() {
         binding?.apply {
-            lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.getListUsers
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
                         homePagingAdapter.submitData(lifecycle, pagingData)
                         homePagingAdapter.addLoadStateListener { loadState ->
@@ -125,9 +125,9 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
 
     private fun searchUser(value: String) {
         binding?.apply {
-            lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.searchUser(value)
-                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
                         homePagingAdapter.submitData(lifecycle, pagingData)
                         homePagingAdapter.addLoadStateListener { loadState ->
@@ -227,5 +227,10 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             emptyAnimation.gone()
             errorAnimation.gone()
         }
+    }
+
+    override fun onDestroyView() {
+        binding?.rvUsers?.adapter = null
+        super.onDestroyView()
     }
 }

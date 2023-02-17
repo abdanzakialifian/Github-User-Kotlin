@@ -43,9 +43,9 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
                 }
             }
         })
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getAllUser
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { users ->
                     if (users.isNotEmpty()) {
                         showUserFavorite(users)
@@ -81,5 +81,10 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
         val navigateToDetailFragment =
             FavoriteFragmentDirections.actionFavoriteFragmentToDetailUserFragment(username)
         findNavController().navigate(navigateToDetailFragment)
+    }
+
+    override fun onDestroyView() {
+        binding?.rvFavorite?.adapter = null
+        super.onDestroyView()
     }
 }
