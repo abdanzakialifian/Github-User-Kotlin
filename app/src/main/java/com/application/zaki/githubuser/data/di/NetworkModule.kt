@@ -59,9 +59,9 @@ class NetworkModule {
                     .build()
                 chain.proceed(requestBuilder)
             }
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
             .certificatePinner(certificatePinner)
             .build()
 
