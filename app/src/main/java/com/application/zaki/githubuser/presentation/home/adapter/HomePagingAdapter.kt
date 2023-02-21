@@ -58,11 +58,6 @@ class HomePagingAdapter @Inject constructor() :
 
     override fun onBindViewHolder(holder: HomePagingViewHolder, position: Int) {
         holder.bind(getItem(position))
-        holder.setIsRecyclable(true)
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
     }
 
     interface IOnItemCliCkCallback {

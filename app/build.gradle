@@ -115,5 +115,12 @@ dependencies {
     implementation "com.airbnb.android:lottie:$lottie_version"
 
     // leak canary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    def leak_canary_version = "2.10"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
+
+    // sql cipher
+    def sql_cipher_version = "4.5.3"
+    def sqlite_version = "2.2.0"
+    implementation "net.zetetic:android-database-sqlcipher:$sql_cipher_version"
+    implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
 }
