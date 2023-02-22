@@ -21,6 +21,7 @@ import com.application.zaki.githubuser.utils.loadImageUrl
 import com.application.zaki.githubuser.utils.visible
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
@@ -44,7 +45,7 @@ class DetailUserFragment : BaseVBFragment<FragmentDetailUserBinding>() {
 
     private fun setDataUser() {
         val username = args.username
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             detailUserViewModel.getDetailUser(username)
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect {

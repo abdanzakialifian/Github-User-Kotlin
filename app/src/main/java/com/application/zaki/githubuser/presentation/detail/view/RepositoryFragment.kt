@@ -14,6 +14,7 @@ import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserV
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,6 +30,13 @@ class RepositoryFragment(private val username: String) :
 
     override fun initView() {
         setListRepositoriesUser()
+        listener()
+    }
+
+    private fun listener() {
+        binding?.btnTryAgain?.setOnClickListener {
+            repositoryPagingAdapter.retry()
+        }
     }
 
     private fun setListRepositoriesUser() {
@@ -39,7 +47,7 @@ class RepositoryFragment(private val username: String) :
                 }
             )
             rvRepository.setHasFixedSize(true)
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getRepositoriesUser(username)
                     .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
@@ -69,6 +77,7 @@ class RepositoryFragment(private val username: String) :
             rvRepository.gone()
             emptyAnimation.gone()
             errorAnimation.gone()
+            btnTryAgain.gone()
         }
     }
 
@@ -80,12 +89,14 @@ class RepositoryFragment(private val username: String) :
                 rvRepository.gone()
                 emptyAnimation.visible()
                 errorAnimation.gone()
+                btnTryAgain.gone()
             } else {
                 shimmerPlaceholder.gone()
                 shimmerPlaceholder.stopShimmer()
                 rvRepository.visible()
                 emptyAnimation.gone()
                 errorAnimation.gone()
+                btnTryAgain.gone()
             }
         }
     }
@@ -96,6 +107,7 @@ class RepositoryFragment(private val username: String) :
             shimmerPlaceholder.stopShimmer()
             rvRepository.gone()
             errorAnimation.visible()
+            btnTryAgain.visible()
         }
     }
 

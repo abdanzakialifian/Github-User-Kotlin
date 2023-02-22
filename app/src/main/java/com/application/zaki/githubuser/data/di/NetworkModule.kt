@@ -24,8 +24,7 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        /*
+    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
         val chuckerCollector = ChuckerCollector(
             context = context,
             showNotification = true,
@@ -38,9 +37,6 @@ class NetworkModule {
             .alwaysReadResponseBody(true)
             .build()
 
-        OkHttpClient.Builder().addInterceptor(chuckerInterceptor)
-        */
-
         val hostname = "api.github.com"
         val certificatePinner = CertificatePinner.Builder()
             .add(hostname, "sha256/uyPYgclc5Jt69vKu92vci6etcBDY8UNTyrHQZJpVoZY=")
@@ -52,6 +48,7 @@ class NetworkModule {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(chuckerInterceptor)
             .addInterceptor { chain ->
                 val original = chain.request()
                 val apiKey = BuildConfig.GITHUB_API_KEY

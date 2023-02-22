@@ -1,6 +1,7 @@
 package com.application.zaki.githubuser.presentation.home.view
 
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -39,12 +40,12 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
     }
 
     private fun listener() {
-        binding?.imgFavorite?.setOnClickListener {
-            navigateToFavoritePage()
-        }
-        binding?.searchView?.let {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                viewModel.searchFlow(it)
+        binding?.apply {
+            imgFavorite.setOnClickListener {
+                navigateToFavoritePage()
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.searchFlow(searchView)
                     .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect {
                         if (it.isEmpty()) {
@@ -54,26 +55,29 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
                         }
                     }
             }
-        }
-        binding?.rvUsers?.adapter = homePagingAdapter.withLoadStateFooter(
-            footer = LoadingStateAdapter {
+            rvUsers.adapter = homePagingAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    homePagingAdapter.retry()
+                }
+            )
+            homePagingAdapter.setOnItemClickCallback(object :
+                HomePagingAdapter.IOnItemCliCkCallback {
+                override fun onItemClicked(item: ListUsers?) {
+                    navigateToDetailPage(item?.login ?: "")
+                }
+
+                override fun onFavoriteClicked(item: ListUsers?, imageView: ImageView) {
+                    handleFavoriteButton(item, imageView)
+                }
+
+                override fun onUserId(id: Int, imageView: ImageView) {
+                    handleFavoriteButtonState(id, imageView)
+                }
+            })
+            btnTryAgain.setOnClickListener {
                 homePagingAdapter.retry()
             }
-        )
-        homePagingAdapter.setOnItemClickCallback(object : HomePagingAdapter.IOnItemCliCkCallback {
-            override fun onItemClicked(item: ListUsers?) {
-                navigateToDetailPage(item?.login ?: "")
-            }
-
-            override fun onFavoriteClicked(item: ListUsers?, imageView: ImageView) {
-                handleFavoriteButton(item, imageView)
-            }
-
-            override fun onUserId(id: Int, imageView: ImageView) {
-                handleFavoriteButtonState(id, imageView)
-            }
         }
-        )
     }
 
     private fun favoriteUser(imgFavorite: ImageView, isFavorite: Boolean = false) {
@@ -95,60 +99,56 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
     }
 
     private fun setListUser() {
-        binding?.apply {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                viewModel.getListUsers
-                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                    .collect { pagingData ->
-                        homePagingAdapter.submitData(lifecycle, pagingData)
-                        homePagingAdapter.addLoadStateListener { loadState ->
-                            when (loadState.refresh) {
-                                is LoadState.Loading -> {
-                                    showShimmerLoading()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getListUsers
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { pagingData ->
+                    homePagingAdapter.submitData(lifecycle, pagingData)
+                    homePagingAdapter.addLoadStateListener { loadState ->
+                        when (loadState.refresh) {
+                            is LoadState.Loading -> {
+                                showShimmerLoading()
+                            }
+                            is LoadState.NotLoading -> {
+                                if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
+                                    showEmptyAnimation()
+                                } else {
+                                    showListUser()
                                 }
-                                is LoadState.NotLoading -> {
-                                    if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
-                                        showEmptyAnimation()
-                                    } else {
-                                        showListUser()
-                                    }
-                                }
-                                is LoadState.Error -> {
-                                    showErrorAnimation()
-                                }
+                            }
+                            is LoadState.Error -> {
+                                showErrorAnimation()
                             }
                         }
                     }
-            }
+                }
         }
     }
 
     private fun searchUser(value: String) {
-        binding?.apply {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                viewModel.searchUser(value)
-                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                    .collect { pagingData ->
-                        homePagingAdapter.submitData(lifecycle, pagingData)
-                        homePagingAdapter.addLoadStateListener { loadState ->
-                            when (loadState.refresh) {
-                                is LoadState.Loading -> {
-                                    showShimmerLoading()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.searchUser(value)
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { pagingData ->
+                    homePagingAdapter.submitData(lifecycle, pagingData)
+                    homePagingAdapter.addLoadStateListener { loadState ->
+                        when (loadState.refresh) {
+                            is LoadState.Loading -> {
+                                showShimmerLoading()
+                            }
+                            is LoadState.NotLoading -> {
+                                if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
+                                    showEmptyAnimation()
+                                } else {
+                                    showListUser()
                                 }
-                                is LoadState.NotLoading -> {
-                                    if (loadState.append.endOfPaginationReached && homePagingAdapter.itemCount == 0) {
-                                        showEmptyAnimation()
-                                    } else {
-                                        showListUser()
-                                    }
-                                }
-                                is LoadState.Error -> {
-                                    showErrorAnimation()
-                                }
+                            }
+                            is LoadState.Error -> {
+                                showErrorAnimation()
                             }
                         }
                     }
-            }
+                }
         }
     }
 
@@ -196,6 +196,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             shimmerPlaceholder.startShimmer()
             emptyAnimation.gone()
             errorAnimation.gone()
+            btnTryAgain.gone()
         }
     }
 
@@ -206,6 +207,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             rvUsers.gone()
             emptyAnimation.visible()
             errorAnimation.gone()
+            btnTryAgain.gone()
         }
     }
 
@@ -216,6 +218,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             rvUsers.gone()
             emptyAnimation.gone()
             errorAnimation.visible()
+            btnTryAgain.visible()
         }
     }
 
@@ -226,6 +229,7 @@ class HomeFragment : BaseVBFragment<FragmentHomeBinding>() {
             rvUsers.visible()
             emptyAnimation.gone()
             errorAnimation.gone()
+            btnTryAgain.gone()
         }
     }
 

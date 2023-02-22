@@ -16,6 +16,7 @@ import com.application.zaki.githubuser.presentation.detail.viewmodel.DetailUserV
 import com.application.zaki.githubuser.utils.gone
 import com.application.zaki.githubuser.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +31,19 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
 
     override fun initView() {
         setListFollowers()
+        listener()
+    }
+
+    private fun listener() {
+        detailPagingAdapter.setOnItemClickCallback(object :
+            DetailPagingAdapter.IOnItemClickCallback {
+            override fun onItemClicked(item: ListUsers?) {
+                navigateToDetailPage(item)
+            }
+        })
+        binding?.btnTryAgain?.setOnClickListener {
+            detailPagingAdapter.retry()
+        }
     }
 
     private fun setListFollowers() {
@@ -40,7 +54,7 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
                 }
             )
             rvUsersFollowers.setHasFixedSize(true)
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getFollowersUser(username)
                     .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                     .collect { pagingData ->
@@ -61,13 +75,6 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
                     }
             }
         }
-
-        detailPagingAdapter.setOnItemClickCallback(object :
-            DetailPagingAdapter.IOnItemClickCallback {
-            override fun onItemClicked(item: ListUsers?) {
-                navigateToDetailPage(item)
-            }
-        })
     }
 
     private fun navigateToDetailPage(item: ListUsers?) {
@@ -85,6 +92,7 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
             rvUsersFollowers.gone()
             emptyAnimation.gone()
             errorAnimation.gone()
+            btnTryAgain.gone()
         }
     }
 
@@ -96,12 +104,14 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
                 rvUsersFollowers.gone()
                 emptyAnimation.visible()
                 errorAnimation.gone()
+                btnTryAgain.gone()
             } else {
                 shimmerPlaceholder.gone()
                 shimmerPlaceholder.stopShimmer()
                 rvUsersFollowers.visible()
                 emptyAnimation.gone()
                 errorAnimation.gone()
+                btnTryAgain.gone()
             }
         }
     }
@@ -112,6 +122,7 @@ class FollowersFragment(private val username: String) : BaseVBFragment<FragmentF
             shimmerPlaceholder.stopShimmer()
             rvUsersFollowers.gone()
             errorAnimation.visible()
+            btnTryAgain.visible()
         }
     }
 

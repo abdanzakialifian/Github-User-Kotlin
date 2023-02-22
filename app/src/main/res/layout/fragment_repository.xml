@@ -71,6 +71,20 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/error_animation" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button_border_rounded"
+        android:paddingHorizontal="40dp"
+        android:text="@string/try_again"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_animation" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_repository"
         android:layout_width="0dp"

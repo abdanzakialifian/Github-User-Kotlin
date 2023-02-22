@@ -43,7 +43,7 @@ class FavoriteFragment : BaseVBFragment<FragmentFavoriteBinding>() {
                 }
             }
         })
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getAllUser
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { users ->
